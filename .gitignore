@@ -1,0 +1,7 @@
+node_modules
+.settings
+.project
+.DS_Store
+.*.swp
+*.log
+dist
