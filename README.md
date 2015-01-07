@@ -1,35 +1,12 @@
 ## Landsat8 Metadata API
 
-*This is a fork of the excellent OpenFDA API: https://github.com/FDA/openfda/tree/master/api*
+This small nodejs application creates an API for landsat metadata.
 
-## Getting started
+#### Dependencies: Elastic Search
 
-### Installing Elastic Search on Ubuntu:
+Donwload and install the lastest version of elastic search zip from [ES website](http://www.elasticsearch.org/download/)
 
-First you need Oracle Java
-
-    $: sudo add-apt-repository ppa:webupd8team/java
-    $: sudo apt-get update
-    $: sudo apt-get install oracle-java7-installer -y
-
-Then you need to get the latest version of elastic search debian package from [ES website](http://www.elasticsearch.org/download/)
-
-    $: wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.1.deb
-    $: sudo dpkg -i elasticsearch-1.3.1.deb
-    $: sudo update-rc.d elasticsearch defaults 95 10
-    $: sudo /etc/init.d/elasticsearch start
-
-ES will be accessible on `http://localhost:9200`
-
-#### Installing Elastic Search on Mac
-
-Donwload the lastest version of elastic search zip from [ES website](http://www.elasticsearch.org/download/)
-
-Unzip and run `bin/elasticsearch`
-
-ES will be accessible on `http://localhost:9200`
-
-## Running the API
+#### Installation
 
 Install NodeJS, npm and forever (This is ONLY needed if you want to run the API engine)
 
@@ -60,6 +37,15 @@ To Kill the forever job:
 
     $: forever stop 0
 
-## Updating the metadata
+#### Updating the metadata
 
 Read more [here](updater/README.md)
+
+#### Credit
+
+This is a fork of the excellent OpenFDA API: https://github.com/FDA/openfda/tree/master/api
+
+
+### To Do
+
+- Add a documentation for the API
