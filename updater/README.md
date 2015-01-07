@@ -12,4 +12,4 @@ To update the metadata just run:
 
 ### Credit
 
-This updater was originally developed for landsat-util.
+This updater was originally developed for [landsat-util](https://github.com/developmentseed/landsat-util).
