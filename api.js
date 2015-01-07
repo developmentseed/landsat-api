@@ -23,7 +23,7 @@ var META = {
   'author': 'Development Seed',
   'contributor': 'Scisco',
   'license': 'http://creativecommons.org/publicdomain/zero/1.0/legalcode',
-  'last_updated': '2014-08-01'
+  'last_updated': '2015-01-07'
 };
 
 var HTTP_CODE = {
