@@ -62,6 +62,4 @@ To Kill the forever job:
 
 ## Updating the metadata
 
-To update the mettadata data you need to install Develompment Seed's Landsat Utiltiy. Follow the steps [here](https://github.com/developmentseed/landsat-util) to install landsat-util. Then run:
-
-    $: landsat --update-metadata
+Read more [here](updater/README.md)
