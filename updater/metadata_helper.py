@@ -120,7 +120,10 @@ class Metadata(object):
                         meta_file.write(chunk)
                         counter += 1
                         chunk_sum = float(counter * CHUNK)
-                        perct = chunk_sum / total_size
+                        if total_size:
+                            perct = chunk_sum / total_size
+                        else:
+                            perct = 0
                         print('==> download progress: {:.2%}'.format(perct),
                               end='\r')
                         sys.stdout.flush()
@@ -143,8 +146,11 @@ class Metadata(object):
     def get_url_file_size(self, remote_file):
         """gets filesize of remote file"""
 
-        size = remote_file.headers.get('content-length')
-        return float(size)
+        try:
+            size = remote_file.headers.get('content-length')
+            return float(size)
+        except TypeError:
+            return None
 
     def file_is_csv(self, remote_file):
         """Checks whether the file is CSV"""
