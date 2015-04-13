@@ -37,6 +37,23 @@ To Kill the forever job:
 
     $: forever stop 0
 
+#### Config
+
+The following environmental variables are available for customizing the API. If you add the variables to an `.env` file, they are loaded automatically when the app starts.
+
+```
+
+QUERY_LIMIT=100
+COUNT_LIMIT=1000
+PORT=8080
+ES_HOST=localhost:9200
+NODE_ENV=production
+NEW_RELIC_APP_NAME=some_app
+NEW_RELIC_LICENSE_KEY=some_license
+RESPONSE_HEADER_SERVER=api.developmentseed.org
+
+```
+
 #### Updating the metadata
 
 Read more [here](updater/README.md)

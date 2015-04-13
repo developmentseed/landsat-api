@@ -12,6 +12,9 @@ var underscore = require('underscore');
 
 var EXPECTED_PARAMS = ['search', 'count', 'limit', 'skip'];
 
+var QUERY_LIMIT = process.env.QUERY_LIMIT || 100;
+var COUNT_LIMIT = process.env.COUNT_LIMIT || 1000;
+
 exports.API_REQUEST_ERROR = 'ApiRequestError';
 var API_REQUEST_ERROR = exports.API_REQUEST_ERROR;
 
@@ -49,19 +52,19 @@ exports.CheckParams = function(params) {
   }
 
   // Limit to 100 results per search request.
-  if (!params.count && params.limit && params.limit > 100) {
+  if (!params.count && params.limit && params.limit > QUERY_LIMIT) {
     throw {
       name: API_REQUEST_ERROR,
-      message: 'Limit cannot exceed 100 results for search requests. Use ' +
+      message: 'Limit cannot exceed ' + QUERY_LIMIT + ' results for search requests. Use ' +
         'the skip param to get additional results.'
     };
   }
 
   // Limit to 1000 results per count request.
-  if (params.count && params.limit && params.limit > 1000) {
+  if (params.count && params.limit && params.limit > COUNT_LIMIT) {
     throw {
       name: API_REQUEST_ERROR,
-      message: 'Limit cannot exceed 1000 results for count requests.'
+      message: 'Limit cannot exceed ' + COUNT_LIMIT + ' results for count requests.'
     };
   }
 
