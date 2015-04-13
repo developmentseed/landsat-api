@@ -8,6 +8,9 @@
 //
 // License: CC0 1.0 Universal
 
+// New Relic monitoring
+require('newrelic');
+
 var ejs = require('elastic.js');
 var elasticsearch = require('elasticsearch');
 var express = require('express');
