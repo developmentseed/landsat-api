@@ -10,6 +10,21 @@
 
 // New Relic monitoring
 require('newrelic');
+var join = require('path').join;
+var fse = require('fs-extra');
+var env = require('node-env-file');
+
+// Read and load env variables from .env FILE if it exists
+var envFile = join(__dirname, '.env');
+
+if (fse.existsSync(envFile)) {
+  try {
+    env(__dirname + '/.env');
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
 
 var ejs = require('elastic.js');
 var elasticsearch = require('elasticsearch');
