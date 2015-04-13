@@ -50,6 +50,7 @@ ES_HOST=localhost:9200
 NODE_ENV=production
 NEW_RELIC_APP_NAME=some_app
 NEW_RELIC_LICENSE_KEY=some_license
+RESPONSE_HEADER_SERVER=api.developmentseed.org
 
 ```
 

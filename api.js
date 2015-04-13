@@ -41,7 +41,7 @@ var META = {
   'author': 'Development Seed',
   'contributor': 'Scisco',
   'license': 'http://creativecommons.org/publicdomain/zero/1.0/legalcode',
-  'last_updated': '2015-01-07'
+  'last_updated': '2015-04-13'
 };
 
 var HTTP_CODE = {
@@ -120,7 +120,7 @@ LogRequest = function(request) {
 };
 
 SetHeaders = function(response) {
-  response.header('Server', 'api.developmentseed.org');
+  response.header('Server', process.env.RESPONSE_HEADER_SERVER || 'api.developmentseed.org');
   // http://john.sh/blog/2011/6/30/cross-domain-ajax-expressjs-
   // and-access-control-allow-origin.html
   response.header('Access-Control-Allow-Origin', '*');
