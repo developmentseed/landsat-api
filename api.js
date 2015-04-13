@@ -8,8 +8,6 @@
 //
 // License: CC0 1.0 Universal
 
-// New Relic monitoring
-require('newrelic');
 var join = require('path').join;
 var fse = require('fs-extra');
 var env = require('node-env-file');
@@ -26,6 +24,8 @@ if (fse.existsSync(envFile)) {
   }
 }
 
+// New Relic monitoring
+require('newrelic');
 var ejs = require('elastic.js');
 var elasticsearch = require('elasticsearch');
 var express = require('express');
