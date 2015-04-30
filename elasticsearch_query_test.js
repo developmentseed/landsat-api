@@ -93,54 +93,5 @@ exports.testSupportedQueryString_Supported = function(test) {
   test.done();
 };
 
-exports.testReplaceExact = function(test) {
-  // patient.drug.openfda section, exact but no value
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.drug.openfda.product_ndc.exact') ==
-      'patient.drug.openfda.product_ndc_exact',
-        'patient.drug.openfda.product_ndc.exact');
-
-  // openfda section, exact with value
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.drug.openfda.product_ndc.exact:10') ==
-      'patient.drug.openfda.product_ndc_exact:10',
-        'patient.drug.openfda.product_ndc.exact:10');
-
-  // multiple patient.drug.openfda exacts with values
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.drug.openfda.product_ndc.exact:10 AND ' +
-    'patient.drug.openfda.spl_id.exact:a') ==
-      'patient.drug.openfda.product_ndc_exact:10 AND ' +
-      'patient.drug.openfda.spl_id_exact:a',
-        'patient.drug.openfda.product_ndc.exact:10 AND ' +
-        'patient.drug.openfda.spl_id.exact:a');
-
-  // patient.drug.openfda section, exact with space then value
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.drug.openfda.product_ndc.exact: 10') ==
-      'patient.drug.openfda.product_ndc_exact: 10',
-        'patient.drug.openfda.product_ndc.exact: 10');
-
-  // No exact but in patient.drug.openfda section
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.drug.openfda.unii:"nonsteroidal+anti-inflammatory+drug"') ==
-      'patient.drug.openfda.unii:"nonsteroidal+anti-inflammatory+drug"',
-        'patient.drug.openfda.unii:"nonsteroidal+anti-inflammatory+drug"');
-
-  // No section, no exact
-  test.ok(elasticsearch_query.ReplaceExact(
-    'receivedate:[2004-01-01+TO+2008-12-31]') ==
-      'receivedate:[2004-01-01+TO+2008-12-31]',
-        'receivedate:[2004-01-01+TO+2008-12-31]');
-
-  // Patient section, exact
-  test.ok(elasticsearch_query.ReplaceExact(
-    'patient.reaction.reactionmeddrapt.exact') ==
-      'patient.reaction.reactionmeddrapt.exact',
-        'patient.reaction.reactionmeddrapt.exact');
-
-  test.done();
-};
-
 
 
