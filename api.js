@@ -24,6 +24,8 @@ if (fse.existsSync(envFile)) {
   }
 }
 
+var PROVIDED_BY = process.env.PROVIDED_BY || 'Development Seed'
+
 // New Relic monitoring
 require('newrelic');
 var ejs = require('elastic.js');
@@ -36,12 +38,8 @@ var api_request = require('./api_request.js');
 var elasticsearch_query = require('./elasticsearch_query.js');
 var logging = require('./logging.js');
 var META = {
-  'credit': 'This API is based on the openFDA\'s API ' +
-            'https://github.com/FDA/openfda/tree/master/api ',
-  'author': 'Development Seed',
-  'contributor': 'Scisco',
+  'provided_by': PROVIDED_BY,
   'license': 'http://creativecommons.org/publicdomain/zero/1.0/legalcode',
-  'last_updated': '2015-04-13'
 };
 
 var HTTP_CODE = {
