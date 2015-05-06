@@ -31,6 +31,9 @@ var elasticsearch = require('elasticsearch');
 var express = require('express');
 var moment = require('moment');
 var underscore = require('underscore');
+var inside = require('turf-inside');
+var point = require('turf-point');
+var polygon = require('turf-polygon');
 
 var api_request = require('./api_request.js');
 var elasticsearch_query = require('./elasticsearch_query.js');
@@ -60,6 +63,8 @@ var FIELDS_TO_REMOVE = [
 var MAIN_INDEX = 'landsat';
 
 var app = express();
+
+var containsPattern = /(\sAND\s)?contains:(\d+(?:\.\d*)?,\d+(?:\.\d*)?)/;
 
 app.disable('x-powered-by');
 
@@ -148,6 +153,7 @@ TryToCheckApiParams = function(request, response) {
 };
 
 TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) {
+
   try {
     var es_query = elasticsearch_query.BuildQuery(params);
     log.info(es_query.toString(), 'Elasticsearch Query');
@@ -174,7 +180,7 @@ TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) 
   return es_search_params;
 };
 
-TrySearch = function(index, params, es_search_params, response) {
+TrySearch = function(index, params, es_search_params, response, cLonLat) {
   client.search(es_search_params).then(function(body) {
     if (body.hits.hits.length == 0) {
       ApiError(response, 'NOT_FOUND', 'No matches found!');
@@ -198,14 +204,14 @@ TrySearch = function(index, params, es_search_params, response) {
         }
         response_json.results.push(es_results);
       }
-      response.json(HTTP_CODE.OK, response_json);
+      response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
 
     } else if (params.count) {
       if (body.facets.count.terms) {
         // Term facet count
         if (body.facets.count.terms.length != 0) {
           response_json.results = body.facets.count.terms;
-          response.json(HTTP_CODE.OK, response_json);
+          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
         } else {
           ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
@@ -217,7 +223,7 @@ TrySearch = function(index, params, es_search_params, response) {
             body.facets.count.entries[i].time = day.format('YYYYMMDD');
           }
           response_json.results = body.facets.count.entries;
-          response.json(HTTP_CODE.OK, response_json);
+          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
         } else {
           ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
@@ -244,15 +250,57 @@ Endpoint = function(noun) {
     }
 
     var index = noun;
+
+
+    // remove contains clause for use in turf
+    // add a search parameter to limit the extent
+    var cLonLat;
+    if (containsPattern.test(params.search)) {
+      contains = params.search.match(containsPattern)[2];
+      cLonLat = contains.split(',');
+      // because we are filtering after the elasticsearch query, limit our results to the extent
+      // but allow unlimited results
+      params.search = params.search.replace(containsPattern,'$1upperLeftCornerLatitude:[' +
+        cLonLat[1] + ' TO 1000] AND lowerRightCornerLatitude:[-1000 TO ' +
+        cLonLat[1] + '] AND lowerLeftCornerLongitude:[-1000 TO ' +
+        cLonLat[0] + '] AND upperRightCornerLongitude:[' +
+        cLonLat[0] + ' TO 1000]');
+      params.limit = process.env.QUERY_LIMIT || 1000000000;
+    }
+
     var es_search_params =
       TryToBuildElasticsearchParams(params, index, response);
     if (es_search_params == null) {
       return;
     }
 
-    TrySearch(index, params, es_search_params, response);
+    TrySearch(index, params, es_search_params, response, cLonLat);
   });
 };
+
+  /**
+   * This function adds one to its input.
+   * @param {number} input any number
+   * @returns {number} that number, plus one.
+   */
+
+responseFilter = function (response_json, cLonLat) {
+  if (!cLonLat) return response_json;
+  var thePoint = point(cLonLat);
+  var resultPolygon;
+  response_json.results = response_json.results.filter(function(result){
+    resultPolygon = polygon([[
+      [result.lowerLeftCornerLongitude, result.lowerLeftCornerLatitude],
+      [result.upperLeftCornerLongitude, result.upperLeftCornerLatitude],
+      [result.upperRightCornerLongitude, result.upperRightCornerLatitude],
+      [result.lowerRightCornerLongitude, result.lowerRightCornerLatitude],
+      [result.lowerLeftCornerLongitude, result.lowerLeftCornerLatitude]
+    ]]);
+    return inside(thePoint, resultPolygon);
+  })
+  return response_json;
+}
+
 Endpoint('landsat');
 
 // From http://strongloop.com/strongblog/
