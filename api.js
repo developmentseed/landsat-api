@@ -251,7 +251,6 @@ Endpoint = function(noun) {
 
     var index = noun;
 
-
     // remove contains clause for use in turf
     // add a search parameter to limit the extent
     var cLonLat;
@@ -279,9 +278,10 @@ Endpoint = function(noun) {
 };
 
   /**
-   * This function adds one to its input.
-   * @param {number} input any number
-   * @returns {number} that number, plus one.
+   * This returns the response_json optionally filtered for scenes containing a given point.
+   * @param {object} response_json the api response object
+   * @param {array} cLonLat an array containing a longitude and latitude for filtering
+   * @returns {object} the reponse_json with the results property filtered by cLonLat.
    */
 
 responseFilter = function (response_json, cLonLat) {
