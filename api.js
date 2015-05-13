@@ -30,7 +30,7 @@ var ejs = require('elastic.js');
 var elasticsearch = require('elasticsearch');
 var express = require('express');
 var moment = require('moment');
-var underscore = require('underscore');
+var _ = require('underscore');
 var inside = require('turf-inside');
 var point = require('turf-point');
 var polygon = require('turf-polygon');
@@ -187,7 +187,7 @@ TrySearch = function(index, params, es_search_params, response, cLonLat) {
     }
 
     var response_json = {};
-    response_json.meta = underscore.clone(META);
+    response_json.meta = _.clone(META);
 
     if (!params.count) {
       response_json.meta.results = {
@@ -204,14 +204,14 @@ TrySearch = function(index, params, es_search_params, response, cLonLat) {
         }
         response_json.results.push(es_results);
       }
-      response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
+      response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat, params.userLimit));
 
     } else if (params.count) {
       if (body.facets.count.terms) {
         // Term facet count
         if (body.facets.count.terms.length != 0) {
           response_json.results = body.facets.count.terms;
-          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
+          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat, params.userLimit));
         } else {
           ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
@@ -223,7 +223,7 @@ TrySearch = function(index, params, es_search_params, response, cLonLat) {
             body.facets.count.entries[i].time = day.format('YYYYMMDD');
           }
           response_json.results = body.facets.count.entries;
-          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat));
+          response.json(HTTP_CODE.OK, responseFilter(response_json, cLonLat, params.userLimit));
         } else {
           ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
@@ -264,6 +264,8 @@ Endpoint = function(noun) {
         cLonLat[1] + '] AND lowerLeftCornerLongitude:[-1000 TO ' +
         cLonLat[0] + '] AND upperRightCornerLongitude:[' +
         cLonLat[0] + ' TO 1000]');
+      // need to return all results internally but retain the user selected limit
+      params.userLimit = _.clone(params.limit)
       params.limit = process.env.QUERY_LIMIT || 1000000000;
     }
 
@@ -281,10 +283,11 @@ Endpoint = function(noun) {
    * This returns the response_json optionally filtered for scenes containing a given point.
    * @param {object} response_json the api response object
    * @param {array} cLonLat an array containing a longitude and latitude for filtering
+   * @param {number} limit user provided value for number of results to return
    * @returns {object} the reponse_json with the results property filtered by cLonLat.
    */
 
-responseFilter = function (response_json, cLonLat) {
+responseFilter = function (response_json, cLonLat, limit) {
   if (!cLonLat) return response_json;
   var thePoint = point(cLonLat);
   var resultPolygon;
@@ -298,6 +301,12 @@ responseFilter = function (response_json, cLonLat) {
     ]]);
     return inside(thePoint, resultPolygon);
   })
+
+  // overwrite the metadata to show the user selected limit
+  // slice the response accordingly
+  response_json.meta.results.limit = limit
+  response_json.results = response_json.results.slice(0,limit)
+
   return response_json;
 }
 
