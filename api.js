@@ -305,6 +305,7 @@ responseFilter = function (response_json, cLonLat, limit) {
   // overwrite the metadata to show the user selected limit
   // slice the response accordingly
   response_json.meta.results.limit = limit
+  response_json.meta.results.total = response_json.results.length
   response_json.results = response_json.results.slice(0,limit)
 
   return response_json;
