@@ -64,7 +64,7 @@ var MAIN_INDEX = 'landsat';
 
 var app = express();
 
-var containsPattern = /(\sAND\s)?contains:(\d+(?:\.\d*)?,\d+(?:\.\d*)?)/;
+var containsPattern = /(\sAND\s)?contains:(-?\d+(?:\.\d*)?,-?\d+(?:\.\d*)?)/;
 
 app.disable('x-powered-by');
 
