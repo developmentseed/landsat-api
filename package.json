@@ -30,7 +30,7 @@
     "good": "^6.1.4",
     "good-console": "^5.0.2",
     "hapi": "^8.6.0",
-    "hapi-paginate": "^0.1.0",
+    "hapi-paginate": "^0.1.1",
     "hapi-response-meta": "^0.1.0",
     "hapi-router": "^3.0.1",
     "lodash": "^3.9.3"
