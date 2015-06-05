@@ -24,6 +24,7 @@
   "homepage": "https://github.com/developmentseed/landsat-api#readme",
   "dependencies": {
     "boom": "^2.7.2",
+    "csv": "^0.4.2",
     "elastic.js": "^1.2.0",
     "elasticsearch": "^4.1.0",
     "envloader": "0.0.2",
@@ -33,6 +34,11 @@
     "hapi-paginate": "^0.1.1",
     "hapi-response-meta": "^0.1.0",
     "hapi-router": "^3.0.1",
-    "lodash": "^3.9.3"
+    "lodash": "^3.9.3",
+    "request": "^2.57.0",
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "mocha": "^2.2.5"
   }
 }
