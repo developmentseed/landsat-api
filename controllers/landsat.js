@@ -16,8 +16,6 @@ module.exports = function (params, request, cb) {
     q.query(ejs.MatchAllQuery());
   }
 
-  var from = (request.page - 1) * request.limit;
-
   if (params.search) {
     if (!supported_query_re.test(params.search)) {
       err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
@@ -26,6 +24,14 @@ module.exports = function (params, request, cb) {
     }
     q.query(ejs.QueryStringQuery(params.search));
   }
+
+  //Legacy support for skip parameter
+  if (params.skip) {
+    request.page = Math.floor(parseInt(params.skip) / request.limit);
+  }
+
+  // Decide from
+  var from = (request.page - 1) * request.limit;
 
   client.count({
     index: 'landsat',
