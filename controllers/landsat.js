@@ -2,6 +2,7 @@
 
 var ejs = require('elastic.js');
 var client = require('../services/elasticsearch.js');
+var Boom = require('boom');
 
 module.exports = function (params, request, cb) {
 
@@ -21,10 +22,7 @@ module.exports = function (params, request, cb) {
 
   if (params.search) {
     if (!supported_query_re.test(params.search)) {
-      err = new Error({
-        name: 'ElasticsearchQueryError',
-        message: 'Search not supported: ' + params.search
-      });
+      err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
       request.log(['error'], err);
       return cb(err);
     }
@@ -43,7 +41,7 @@ module.exports = function (params, request, cb) {
     }).then(function (body) {
 
       if (body.hits.hits.length === 0) {
-        return cb(err, {}, 0);
+        return cb(Boom.notFound('No matches found!'));
       }
 
       var responseJson = [];
@@ -55,10 +53,10 @@ module.exports = function (params, request, cb) {
       return cb(err, responseJson, found.count);
     }, function(err) {
         request.log(['error'], err);
-        return cb(err);
+        return cb(Boom.badRequest(err));
     });
   }, function(err) {
     request.log(['error'], err);
-    return cb(err);
+    return cb(Boom.badRequest(err));
   });
 };
