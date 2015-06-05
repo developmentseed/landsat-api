@@ -17,11 +17,7 @@ module.exports = [
       landsat(params, request, function (err, records, count) {
         if (err) {
           request.log(err);
-          return reply(Boom.warp(err, 400));
-        }
-
-        if (count === 0) {
-          return reply(Boom.notFound('No matches found!'));
+          return reply(err);
         }
 
         request.count = count;
