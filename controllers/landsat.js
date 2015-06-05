@@ -15,7 +15,6 @@ module.exports = function (params, request, cb) {
   if (params.search) {
     if (!supported_query_re.test(params.search)) {
       err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
-      request.log(['error'], err);
       return cb(err);
     }
 
@@ -74,7 +73,6 @@ module.exports = function (params, request, cb) {
 
     return cb(err, response, count);
   }, function(err) {
-      request.log(['error'], err);
       return cb(Boom.badRequest(err));
   });
 
