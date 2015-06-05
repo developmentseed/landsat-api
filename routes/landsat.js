@@ -20,6 +20,10 @@ module.exports = [
           return reply(Boom.warp(err, 400));
         }
 
+        if (count === 0) {
+          return reply(Boom.notFound('No matches found!'));
+        }
+
         request.count = count;
         return reply(records);
       });
