@@ -22,7 +22,7 @@ module.exports = function (params, request, cb) {
   } else if (params.count) {
     q.facet(ejs.TermsFacet('count').fields([params.count]).size(request.limit));
   } else {
-    q.query(ejs.MatchAllQuery());
+    q.query(ejs.MatchAllQuery()).sort('acquisitionDate', 'desc');
   }
 
   //Legacy support for skip parameter
