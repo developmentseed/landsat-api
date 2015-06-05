@@ -32,6 +32,7 @@ module.exports = [
         }
       }
 
+      // Send for processing
       landsat(params, request, function (err, records, count) {
         if (err) {
           request.log(err);
