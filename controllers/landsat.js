@@ -7,9 +7,7 @@ var Boom = require('boom');
 module.exports = function (params, request, cb) {
 
   var err;
-
-  var SUPPORTED_QUERY_RE = '^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$';
-  var supported_query_re = new RegExp(SUPPORTED_QUERY_RE);
+  var supported_query_re = new RegExp('^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$');
 
   // Build Elastic Search Query
   var q = ejs.Request();
