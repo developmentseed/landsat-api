@@ -51,7 +51,10 @@ Server.prototype.start = function (cb) {
 
   // Register hapi-paginate
   hapi.register({
-    register: require('hapi-paginate')
+    register: require('hapi-paginate'),
+    options: {
+      limit: 1
+    }
   }, function (err) {
     if (err) throw err;
   });
