@@ -34,8 +34,9 @@
     "hapi-paginate": "^0.1.1",
     "hapi-response-meta": "^0.1.0",
     "hapi-router": "^3.0.1",
+    "landsat-meta-updater": "^0.1.0",
     "lodash": "^3.9.3",
-    "request": "^2.57.0",
+    "request": "^2.57.0"
   },
   "devDependencies": {
     "chai": "^3.0.0",
