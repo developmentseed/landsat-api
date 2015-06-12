@@ -4,30 +4,42 @@ var ejs = require('elastic.js');
 var client = require('../services/elasticsearch.js');
 var Boom = require('boom');
 
-module.exports = function (params, request, cb) {
-
+var legacyParams = function (params, q, limit) {
   var err;
   var supported_query_re = new RegExp('^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$');
-
-  // Build Elastic Search Query
-  var q = ejs.Request();
 
   if (params.search) {
     if (!supported_query_re.test(params.search)) {
       err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
-      return cb(err);
+      throw err;
     }
 
     q.query(ejs.QueryStringQuery(params.search));
   } else if (params.count) {
-    q.facet(ejs.TermsFacet('count').fields([params.count]).size(request.limit));
-  } else {
+    q.facet(ejs.TermsFacet('count').fields([params.count]).size(limit));
+  }
+
+  return q;
+};
+
+module.exports = function (params, request, cb) {
+  var err;
+
+  // Build Elastic Search Query
+  var q = ejs.Request();
+
+  if (Object.keys(params).length === 0) {
     q.query(ejs.MatchAllQuery()).sort('acquisitionDate', 'desc');
   }
 
-  //Legacy support for skip parameter
+  // Do legacy search
+  if (params.search || params.count) {
+    q = legacyParams(params, q, request.limit);
+  }
+
+  // Legacy support for skip parameter
   if (params.skip) {
-    request.page = Math.floor(parseInt(params.skip) / request.limit);
+    request.page = Math.floor(parseInt(params.skip, 10) / request.limit);
   }
 
   // Decide from
@@ -36,7 +48,7 @@ module.exports = function (params, request, cb) {
   var search_params = {
     index: process.env.ES_INDEX || 'landsat',
     body: q
-  }
+  };
 
   if (!params.count) {
     search_params.from = from;
@@ -44,15 +56,13 @@ module.exports = function (params, request, cb) {
   }
 
   client.search(search_params).then(function (body) {
-
     var response = [];
     var count = 0;
 
     // Process Facets
     if (params.count) {
-
       // Term facet count
-      if (body.facets.count.terms.length != 0) {
+      if (body.facets.count.terms.length !== 0) {
         response = body.facets.count.terms;
         count = body.facets.count.total;
       } else {
@@ -72,8 +82,7 @@ module.exports = function (params, request, cb) {
     }
 
     return cb(err, response, count);
-  }, function(err) {
-      return cb(Boom.badRequest(err));
+  }, function (err) {
+    return cb(Boom.badRequest(err));
   });
-
 };
