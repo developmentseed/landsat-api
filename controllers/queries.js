@@ -21,6 +21,55 @@ var legacyParams = function (params, q, limit) {
   return q;
 };
 
+var geojsonQueryBuilder = function (feature, query) {
+  var shape = ejs.Shape(feature.geometry.type, feature.geometry.coordinates);
+  query = query.should(ejs.GeoShapeQuery()
+                          .field('boundingBox')
+                          .shape(shape));
+  return query;
+}
+
+var contains = function (params, query) {
+  var correct_query = new RegExp('^[0-9\.\,\-]+$');
+  if (correct_query.test(params)) {
+    var coordinates = params.split(',');
+    coordinates = coordinates.map(parseFloat);
+
+    var shape = ejs.Shape('circle', coordinates).radius('1km');
+
+    query = query.should(ejs.GeoShapeQuery()
+                            .field('boundingBox')
+                            .shape(shape));
+    return query;
+  } else {
+    err.incorrectCoordinatesError(params);
+  }
+};
+
+var intersects = function (params, query) {
+  try {
+    var geojson = JSON.parse(params);
+  } catch (e) {
+    err.invalidGeoJsonError();
+  }
+
+  if (gjv.valid(geojson)) {
+
+    if (geojson.type === 'FeatureCollection') {
+      for (var i=0; i < geojson.features.length; i++) {
+        var feature = geojson.features[i];
+        query = geojsonQueryBuilder(feature, query);
+      }
+    } else {
+      query = geojsonQueryBuilder(geojson, query);
+    }
+
+    return query;
+  } else {
+    err.invalidGeoJsonError();
+  }
+};
+
 module.exports = function (params, q, limit) {
   var query = ejs.BoolQuery();
 
@@ -30,47 +79,11 @@ module.exports = function (params, q, limit) {
   };
 
   if (params.contains) {
-    var correct_query = new RegExp('^[0-9\.\,\-]+$');
-    if (correct_query.test(params.contains)) {
-      var coordinates = params.contains.split(',');
-      coordinates = coordinates.map(parseFloat);
-
-      var shape = ejs.Shape('circle', coordinates).radius('1km');
-
-      query = query.should(ejs.GeoShapeQuery()
-                              .field('boundingBox')
-                              .shape(shape));
-    } else {
-      err.incorrectCoordinatesError(params.contains);
-    }
+    query = contains(params.contains, query);
   }
 
   if (params.intersects) {
-    try {
-      var geojson = JSON.parse(params.intersects);
-    } catch (e) {
-      err.invalidGeoJsonError();
-    }
-
-    if (gjv.valid(geojson)) {
-
-      if (geojson.type === 'FeatureCollection') {
-        for (var i=0; i < geojson.features.length; i++) {
-          var feature = geojson.features[i];
-          var shape = ejs.Shape(feature.geometry.type, feature.geometry.coordinates);
-          query = query.should(ejs.GeoShapeQuery()
-                                  .field('boundingBox')
-                                  .shape(shape));
-        }
-      } else {
-        var shape = ejs.Shape(geojson.geometry.type, geojson.geometry.coordinates);
-        query = query.should(ejs.GeoShapeQuery()
-                                .field('boundingBox')
-                                .shape(shape));
-      }
-    } else {
-      err.invalidGeoJsonError();
-    }
+    query = intersects(params.intersects, query);
   }
 
   return q.query(query);
