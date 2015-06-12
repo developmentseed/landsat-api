@@ -1,6 +1,7 @@
 'use strict';
 
 var ejs = require('elastic.js');
+var _ = require('lodash');
 var gjv = require('geojson-validation');
 var err = require('./errors.js')
 
@@ -69,23 +70,87 @@ var intersects = function (params, query) {
   }
 };
 
-var acquisitionFilter = function (params, query) {
+var rangeQuery = function (from, to, field, query) {
 
-  if (params.date_from && params.date_to) {
-    return query.must(ejs.RangeQuery('acquisitionDate').from(params.date_from).to(params.date_to));
+  if (from && to) {
+    return query.must(ejs.RangeQuery(field).from(from).to(to));
   }
 
-  if (params.date_from) {
-    return query.must(ejs.RangeQuery('acquisitionDate').from(params.date_from));
+  if (from) {
+    return query.must(ejs.RangeQuery(field).from(from));
   }
 
-  if (params.date_to) {
-    return query.must(ejs.RangeQuery('acquisitionDate').to(params.date_to));
+  if (to) {
+    return query.must(ejs.RangeQuery(field).to(to));
   }
+};
+
+var termQuery = function (param, field, query) {
+  return query.must(ejs.TermQuery(field, param));
 };
 
 module.exports = function (params, q, limit) {
   var query = ejs.BoolQuery();
+
+  var rangeFields = [
+    {
+      from: 'date_from',
+      to: 'date_to',
+      field: 'acquisitionDate'
+    },
+    {
+      from: 'scene_start_time_from',
+      to: 'scene_start_time_to',
+      field: 'sceneStartTime'
+    },
+    {
+      from: 'scene_stop_time_from',
+      to: 'scene_stop_time_to',
+      field: 'sceneStopTime'
+    },
+    {
+      from: 'cloud_from',
+      to: 'cloud_to',
+      field: 'cloudCoverFull'
+    },
+    {
+      from: 'sun_azimuth_from',
+      to: 'sun_azimuth_to',
+      field: 'sunAzimuth'
+    },
+    {
+      from: 'sun_elevation_from',
+      to: 'sun_elevation_to',
+      field: 'sunElevation'
+    }
+  ];
+
+  var termFields = [
+    {
+      parameter: 'scene_id',
+      field: 'sceneID'
+    },
+    {
+      parameter: 'row',
+      field: 'row'
+    },
+    {
+      parameter: 'path',
+      field: 'path'
+    },
+    {
+      parameter: 'sensor',
+      field: 'sensor'
+    },
+    {
+      parameter: 'receiving_station',
+      field: 'receivingStation'
+    },
+    {
+      parameter: 'day_or_night',
+      field: 'dayOrNight'
+    }
+  ]
 
   // Do legacy search
   if (params.search || params.count) {
@@ -100,67 +165,25 @@ module.exports = function (params, q, limit) {
     query = intersects(params.intersects, query);
   }
 
-  if (params.date_from || params.date_to) {
-    query = acquisitionFilter(params, query);
+  // Range search
+  for (var i = 0; i < rangeFields.length; i++) {
+    if (_.has(params, rangeFields[i].from) || _.has(params, rangeFields[i].to)) {
+
+      query = rangeQuery(
+        params[rangeFields[i].from],
+        params[rangeFields[i].to],
+        rangeFields[i].field,
+        query
+      );
+    }
   }
 
-  if (params.scene_start_time_from) {
-
+  // Term search
+  for (var i = 0; i < termFields.length; i++) {
+    if (_.has(params, termFields[i].parameter)) {
+      query = termQuery( params[termFields[i].parameter], termFields[i].field, query);
+    }
   }
-
-  if (params.scene_start_time_to) {
-
-  }
-
-  if (params.cloud_from) {
-
-  }
-
-  if (params.cloud_to) {
-
-  }
-
-  if (params.scene_id) {
-
-  }
-
-  if (params.row) {
-
-  }
-
-  if (params.path) {
-
-  }
-
-  if (params.day_or_night) {
-
-  }
-
-  if (params.sensor) {
-
-  }
-
-  if (params.sun_azimuth_from) {
-
-  }
-
-  if (params.sun_azimuth_to) {
-
-  }
-
-  if (params.sun_elevation_from) {
-
-  }
-
-  if (params.sun_elevation_to) {
-
-  }
-
-  if (params.receiving_station) {
-
-  }
-
-  console.log(JSON.stringify(query.toJSON()));
 
   return q.query(query);
 };
