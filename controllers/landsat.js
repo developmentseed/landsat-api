@@ -2,25 +2,8 @@
 
 var ejs = require('elastic.js');
 var client = require('../services/elasticsearch.js');
+var queries = require('./queries.js');
 var Boom = require('boom');
-
-var legacyParams = function (params, q, limit) {
-  var err;
-  var supported_query_re = new RegExp('^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$');
-
-  if (params.search) {
-    if (!supported_query_re.test(params.search)) {
-      err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
-      throw err;
-    }
-
-    q.query(ejs.QueryStringQuery(params.search));
-  } else if (params.count) {
-    q.facet(ejs.TermsFacet('count').fields([params.count]).size(limit));
-  }
-
-  return q;
-};
 
 module.exports = function (params, request, cb) {
   var err;
@@ -28,13 +11,11 @@ module.exports = function (params, request, cb) {
   // Build Elastic Search Query
   var q = ejs.Request();
 
-  if (Object.keys(params).length === 0) {
-    q.query(ejs.MatchAllQuery()).sort('acquisitionDate', 'desc');
-  }
-
   // Do legacy search
-  if (params.search || params.count) {
-    q = legacyParams(params, q, request.limit);
+  if (Object.keys(params).length > 0) {
+    q = queries(params, q, request.limit);
+  } else {
+    q.query(ejs.MatchAllQuery()).sort('acquisitionDate', 'desc');
   }
 
   // Legacy support for skip parameter
