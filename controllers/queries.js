@@ -2,16 +2,15 @@
 
 var ejs = require('elastic.js');
 var Boom = require('boom');
-var gjv = require("geojson-validation");
+var gjv = require('geojson-validation');
+var err = require('./errors.js')
 
 var legacyParams = function (params, q, limit) {
-  var err;
   var supported_query_re = new RegExp('^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$');
 
   if (params.search) {
     if (!supported_query_re.test(params.search)) {
-      err = Boom.create(400, 'Search not supported: ' + params.search, { timestamp: Date.now() });
-      throw err;
+      err.searchNotSupportedError(params.search);
     }
 
     q.query(ejs.QueryStringQuery(params.search));
@@ -23,7 +22,6 @@ var legacyParams = function (params, q, limit) {
 };
 
 module.exports = function (params, q, limit) {
-  var err;
   var query = ejs.BoolQuery();
 
   // Do legacy search
@@ -43,17 +41,17 @@ module.exports = function (params, q, limit) {
                               .field('boundingBox')
                               .shape(shape));
     } else {
-      err = Boom.create(
-        400,
-        'Incorrect coordinates: ' + params.contains + '. Only digits, dot, minus and comma are allowd.',
-        { timestamp: Date.now() }
-      );
-      throw err;
+      err.incorrectCoordinatesError(params.contains);
     }
   }
 
   if (params.intersects) {
-    var geojson = JSON.parse(params.intersects);
+    try {
+      var geojson = JSON.parse(params.intersects);
+    } catch (e) {
+      err.invalidGeoJsonError();
+    }
+
     if (gjv.valid(geojson)) {
 
       if (geojson.type === 'FeatureCollection') {
@@ -70,6 +68,8 @@ module.exports = function (params, q, limit) {
                                 .field('boundingBox')
                                 .shape(shape));
       }
+    } else {
+      err.invalidGeoJsonError();
     }
   }
 
