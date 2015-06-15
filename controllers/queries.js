@@ -54,7 +54,6 @@ var intersects = function (params, query) {
   }
 
   if (gjv.valid(geojson)) {
-
     if (geojson.type === 'FeatureCollection') {
       for (var i=0; i < geojson.features.length; i++) {
         var feature = geojson.features[i];
