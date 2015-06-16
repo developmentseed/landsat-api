@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "serve": "node index.js",
-    "test": "./node_modules/mocha/bin/mocha test"
+    "test": "./node_modules/mocha/bin/mocha test && npm run docs",
+    "docs": "./node_modules/apidoc/bin/apidoc -i routes/ -o docs_tmp/"
   },
   "repository": {
     "type": "git",
@@ -43,5 +44,9 @@
     "apidoc": "^0.13.1",
     "chai": "^3.0.0",
     "mocha": "^2.2.5"
+  },
+  "apidoc": {
+    "title": "landsat-api",
+    "url" : "https://developmentseed.org/landsat-api"
   }
 }
