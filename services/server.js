@@ -43,7 +43,8 @@ Server.prototype.start = function (cb) {
         name: 'landsat-api',
         license: 'CC0-1.0',
         website: process.env.RESPONSE_HEADER_SERVER || 'https://api.developmentseed.org/landsat'
-      }
+      },
+      routes: ['/landsat']
     }
   }, function (err) {
     if (err) throw err;
@@ -53,7 +54,8 @@ Server.prototype.start = function (cb) {
   hapi.register({
     register: require('hapi-paginate'),
     options: {
-      limit: 1
+      limit: 1,
+      routes: ['/landsat']
     }
   }, function (err) {
     if (err) throw err;
