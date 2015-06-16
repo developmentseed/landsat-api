@@ -29,7 +29,7 @@ Server.prototype.start = function (cb) {
   hapi.register({
     register: require('hapi-router'),
     options: {
-      routes: './routes/*.js'
+      routes: './app/routes/*.js'
     }
   }, function (err) {
     if (err) throw err;
