@@ -38,7 +38,9 @@
     "hapi-router": "^3.0.1",
     "landsat-meta-updater": "^0.1.0",
     "lodash": "^3.9.3",
-    "request": "^2.57.0"
+    "request": "^2.57.0",
+    "turf-area": "^1.1.1",
+    "turf-extent": "^1.0.4"
   },
   "devDependencies": {
     "apidoc": "^0.13.1",

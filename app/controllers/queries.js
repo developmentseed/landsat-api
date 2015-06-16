@@ -2,6 +2,8 @@
 
 var ejs = require('elastic.js');
 var _ = require('lodash');
+var turfArea = require('turf-area');
+var turfExtent = require('turf-extent');
 var gjv = require('geojson-validation');
 var err = require('./errors.js')
 
@@ -74,16 +76,32 @@ var intersects = function (params, query) {
   }
 
   if (gjv.valid(geojson)) {
-    if (geojson.type === 'FeatureCollection') {
-      for (var i=0; i < geojson.features.length; i++) {
-        var feature = geojson.features[i];
-        query = geojsonQueryBuilder(feature, query);
+
+    // calculate area
+    var area = turfArea(geojson) / 1000000;
+
+    console.log(area);
+
+    // If it is smaller than Nigeria use geohash
+    if (area < 500000) {
+      if (geojson.type === 'FeatureCollection') {
+        for (var i=0; i < geojson.features.length; i++) {
+          var feature = geojson.features[i];
+          query = geojsonQueryBuilder(feature, query);
+        }
+      } else {
+        query = geojsonQueryBuilder(geojson, query);
       }
     } else {
-      query = geojsonQueryBuilder(geojson, query);
+      // Query for min and max lat and long
+      var bbox = turfExtent(geojson);
+      query = rangeQuery(bbox[0], bbox[2], 'lowerLeftCornerLongitude', query)
+      query = rangeQuery(bbox[0], bbox[2], 'upperRightCornerLongitude', query)
+      query = rangeQuery(bbox[1], bbox[3], 'upperLeftCornerLatitude', query)
+      query = rangeQuery(bbox[1], bbox[3], 'lowerRightCornerLatitude', query)
     }
 
-    return query;
+    return query
   } else {
     err.invalidGeoJsonError();
   }
