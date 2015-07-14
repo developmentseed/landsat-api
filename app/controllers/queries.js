@@ -69,10 +69,16 @@ var contains = function (params, query) {
  * Accepts valid geojson.
 **/
 var intersects = function (params, query) {
-  try {
-    var geojson = JSON.parse(params);
-  } catch (e) {
-    err.invalidGeoJsonError();
+  // if we receive an object, assume it's GeoJSON, if not, try and parse
+  var geojson;
+  if (typeof(params) === 'object') {
+    geojson = params;
+  } else {
+    try {
+      geojson = JSON.parse(params);
+    } catch (e) {
+      err.invalidGeoJsonError();
+    }
   }
 
   if (gjv.valid(geojson)) {
