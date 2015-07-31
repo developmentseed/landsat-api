@@ -2,8 +2,9 @@
 
 var _ = require('lodash');
 var Boom = require('boom');
-var landsat = require('../controllers/landsat.js');
-
+var es = require('../controllers/es/landsat.js');
+var mongo = require('../controllers/mongo/landsat.js');
+var landsat;
 
 /**
  * @api {get} /landsat GET
@@ -53,6 +54,13 @@ module.exports = [
     method: ['GET', 'POST'],
     path: '/landsat',
     handler: function (request, reply) {
+      // Determine whether to use MongoDB or ElasticSearch
+      if (process.env.DB_TYPE === 'mongo') {
+        landsat = mongo;
+      } else {
+        landsat = es;
+      }
+
       var params = {};
 
       // For GET
