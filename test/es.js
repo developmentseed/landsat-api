@@ -23,7 +23,7 @@ describe('Elasticsearch tests', function () {
     process.env['ES_HOST'] = 'localhost:9200';
 
     // Add records to elasticsearch
-    var csv = fs.readFileSync(__dirname + '/test_data.csv', {encoding: 'utf8'});
+    var csv = fs.readFileSync('./test/test_data.csv', {encoding: 'utf8'});
     nock('http://landsat.usgs.gov')
       .get('/metadata_service/bulk_metadata_files/LANDSAT_8.csv')
       .reply(200, csv);
