@@ -48,7 +48,6 @@ module.exports = function (params, request, cb) {
 
     // Process search
     } else {
-
       count = body.hits.total;
 
       for (var i = 0; i < body.hits.hits.length; i++) {
