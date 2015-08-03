@@ -158,7 +158,45 @@ module.exports = function (port) {
       }
       expect(response.statusCode).to.equal(200);
       var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(0);
+      done();
+    });
+  });
+
+  it('legacy search with sceneID', function (done) {
+    var scene = 'LC81560422015209LGN00';
+    request(url + '?search=sceneID:' + scene, function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
       expect(res.meta.found).to.equal(1);
+      expect(res.results[0].sceneID).to.equal(scene);
+      done();
+    });
+  });
+
+  it('legacy search multiple fields', function (done) {
+    request(url + '?search=path:156+AND+row:41', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(1);
+      done();
+    });
+  });
+
+  it('legacy search multiple fields when result should be empty', function (done) {
+    request(url + '?search=path:156+AND+row:11', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(0);
       done();
     });
   });
