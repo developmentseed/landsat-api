@@ -150,7 +150,6 @@ var intersects = function (params, query) {
  * Returns all records with `sunElevation` smaller than this value.
 **/
 var rangeQuery = function (from, to, field, query) {
-
   if (from && to) {
     return query.must(ejs.RangeQuery(field).from(from).to(to));
   }
