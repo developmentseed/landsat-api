@@ -3,6 +3,7 @@
 var ejs = require('elastic.js');
 var _ = require('lodash');
 var moment = require('moment');
+var compile = require('monquery');
 var gjv = require('geojson-validation');
 var err = require('../errors.js');
 
@@ -11,20 +12,14 @@ var err = require('../errors.js');
  * @apiParam {string} [search] Supports Lucene search syntax for all available fields
  * in the landsat meta data. <br> If search is used, all other parameters are ignored.
 **/
-var legacyParams = function (params, q, limit) {
+var legacyParams = function (params) {
   var supported_query_re = new RegExp('^[0-9a-zA-Z#\*\.\_\:\(\)\"\\[\\]\{\}\\-\\+\>\<\= ]+$');
 
-  if (params.search) {
-    if (!supported_query_re.test(params.search)) {
-      err.searchNotSupportedError(params.search);
-    }
-
-    q.query(ejs.QueryStringQuery(params.search));
-  } else if (params.count) {
-    q.facet(ejs.TermsFacet('count').fields([params.count]).size(limit));
+  if (!supported_query_re.test(params.search)) {
+    err.searchNotSupportedError(params.search);
   }
 
-  return q;
+  return compile(params.search);
 };
 
 /**
@@ -167,6 +162,10 @@ var termQuery = function (param, field, query) {
 };
 
 module.exports = function (params, query, limit) {
+  // if search parameters included ignore other parameters and do legacy search
+  if (params.search) {
+    return legacyParams(params);
+  }
 
   var rangeFields = [
     {
