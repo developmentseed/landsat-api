@@ -2,6 +2,7 @@
 
 var ejs = require('elastic.js');
 var _ = require('lodash');
+var moment = require('moment');
 var gjv = require('geojson-validation');
 var err = require('../errors.js');
 
@@ -127,7 +128,13 @@ var intersects = function (params, query) {
  * @apiParam {number} [sun_elevation_to] The upper limit for `sunElevation` field.
  * Returns all records with `sunElevation` smaller than this value.
 **/
+
 var rangeQuery = function (from, to, field, query) {
+  if (field in ['acquisitionDate', 'sceneStartTime', 'sceneStopTime']) {
+    if (to) to = moment(to).format();
+    if (from) from = moment(from).format();
+  }
+
   if (from && to) {
     query[field] = {$gte: from, $lte: to};
     return query;
@@ -224,7 +231,7 @@ module.exports = function (params, query, limit) {
   // Do legacy search
   if (params.search || params.count) {
     // return legacyParams(params, q, limit);
-  };
+  }
 
   if (params.contains) {
     query = contains(params.contains, query);
