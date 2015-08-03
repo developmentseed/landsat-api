@@ -2,11 +2,8 @@
 
 var Model = require('../../models/landsat.js');
 var queries = require('./queries.js');
-var Boom = require('boom');
 
 module.exports = function (params, request, cb) {
-  var err;
-
   // The query object
   var q = {};
 
@@ -21,8 +18,6 @@ module.exports = function (params, request, cb) {
   }
 
   // Decide from
-  var from = (request.page - 1) * request.limit;
-
   var skip = request.limit * (request.page - 1);
 
   Model.count(q, function (err, count) {
