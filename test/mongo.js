@@ -3,6 +3,7 @@
 
 var async = require('async');
 var mongoose = require('mongoose');
+var moment = require('moment');
 var Landsat = require('../app/models/landsat.js');
 var Server = require('../app/services/server.js');
 var data = require('./data.json');
@@ -24,6 +25,7 @@ describe('MongoDb tests', function () {
 
       // Add records to mongodb
       async.eachSeries(data, function (item, callback) {
+        item.acquisitionDate = moment(item.acquisitionDate).format();
         var record = new Landsat(item);
         record.save(callback);
       }, function (err) {
