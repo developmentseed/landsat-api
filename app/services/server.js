@@ -1,14 +1,16 @@
-/* global server */
 'use strict';
 
 var Hapi = require('hapi');
 
 var Server = function (port) {
   this.port = port;
+  this.hapi = null;
 };
 
 Server.prototype.start = function (cb) {
-  var hapi = new Hapi.Server({
+  var self = this;
+
+  self.hapi = new Hapi.Server({
     connections: {
       routes: {
         cors: true
@@ -23,10 +25,10 @@ Server.prototype.start = function (cb) {
     } : false
   });
 
-  hapi.connection({ port: this.port });
+  self.hapi.connection({ port: this.port });
 
   // Register hapi-router
-  hapi.register({
+  self.hapi.register({
     register: require('hapi-router'),
     options: {
       routes: './app/routes/*.js'
@@ -35,8 +37,20 @@ Server.prototype.start = function (cb) {
     if (err) throw err;
   });
 
+  if (process.env.DB_TYPE === 'mongo') {
+    // Register mongo-db connector
+    self.hapi.register({
+      register: require('hapi-mongoose-db-connector'),
+      options: {
+        mongodbUrl: process.env.MONGODB_URL || 'mongodb://localhost/landsat-api'
+      }
+    }, function (err) {
+      if (err) throw err;
+    });
+  }
+
   // Register hapi-response-meta
-  hapi.register({
+  self.hapi.register({
     register: require('hapi-response-meta'),
     options: {
       content: {
@@ -51,7 +65,7 @@ Server.prototype.start = function (cb) {
   });
 
   // Register hapi-paginate
-  hapi.register({
+  self.hapi.register({
     register: require('hapi-paginate'),
     options: {
       limit: 1,
@@ -70,15 +84,15 @@ Server.prototype.start = function (cb) {
     }]
   };
 
-  hapi.register({
+  self.hapi.register({
     register: require('good'),
     options: options
   }, function (err) {
     if (err) throw err;
   });
 
-  hapi.start(function () {
-    hapi.log(['info'], 'Server running at:' + hapi.info.uri);
+  self.hapi.start(function () {
+    self.hapi.log(['info'], 'Server running at:' + self.hapi.info.uri);
     if (cb) {
       cb();
     }

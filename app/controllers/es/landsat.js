@@ -1,7 +1,7 @@
 'use strict';
 
 var ejs = require('elastic.js');
-var client = require('../services/elasticsearch.js');
+var client = require('../../services/elasticsearch.js');
 var queries = require('./queries.js');
 var Boom = require('boom');
 
@@ -43,18 +43,11 @@ module.exports = function (params, request, cb) {
     // Process Facets
     if (params.count) {
       // Term facet count
-      if (body.facets.count.terms.length !== 0) {
-        response = body.facets.count.terms;
-        count = body.facets.count.total;
-      } else {
-        return cb(Boom.notFound('Nothing to count!'));
-      }
+      response = body.facets.count.terms;
+      count = body.facets.count.total;
 
     // Process search
     } else {
-      if (body.hits.hits.length === 0) {
-        return cb(Boom.notFound('No matches found!'));
-      }
       count = body.hits.total;
 
       for (var i = 0; i < body.hits.hits.length; i++) {

@@ -5,7 +5,7 @@ var _ = require('lodash');
 var turfArea = require('turf-area');
 var turfExtent = require('turf-extent');
 var gjv = require('geojson-validation');
-var err = require('./errors.js')
+var err = require('../errors.js')
 
 /**
  * @apiDefine search
@@ -150,7 +150,6 @@ var intersects = function (params, query) {
  * Returns all records with `sunElevation` smaller than this value.
 **/
 var rangeQuery = function (from, to, field, query) {
-
   if (from && to) {
     return query.must(ejs.RangeQuery(field).from(from).to(to));
   }
