@@ -10,7 +10,7 @@ var client = require('../app/services/elasticsearch.js');
 var shared = require('./shared');
 
 describe('Elasticsearch tests', function () {
-  this.timeout(7000);
+  this.timeout(10000);
   var testIndex = 'test_main';
   var testType = '8';
   var downloadDir = __dirname + '/download';
@@ -28,7 +28,7 @@ describe('Elasticsearch tests', function () {
       .get('/metadata_service/bulk_metadata_files/LANDSAT_8.csv')
       .reply(200, csv);
 
-    var u = new Updater(testIndex, testType, 5, downloadDir);
+    var u = new Updater(testIndex, testType, null, downloadDir);
 
     async.waterfall([
       // Add records to ES
@@ -44,10 +44,10 @@ describe('Elasticsearch tests', function () {
     ], function (err) {
       if (err) console.log(err);
 
-      // Wait for 3000 ms
+      // Wait for 7000 ms
       setTimeout(function () {
         done();
-      }, 3000);
+      }, 7000);
     });
   });
 
