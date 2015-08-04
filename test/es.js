@@ -2,7 +2,7 @@
 'use strict';
 
 var async = require('async');
-var fs = require('fs-extra');
+var fs = require('fs');
 var nock = require('nock');
 var Updater = require('landsat-meta-updater');
 var Server = require('../app/services/server.js');
@@ -23,7 +23,7 @@ describe('Elasticsearch tests', function () {
     process.env['ES_HOST'] = 'localhost:9200';
 
     // Add records to elasticsearch
-    var csv = fs.readFileSync('./test/test_data.csv', {encoding: 'utf8'});
+    var csv = fs.readFileSync(__dirname + '/test_data.csv', {encoding: 'utf8'});
     nock('http://landsat.usgs.gov')
       .get('/metadata_service/bulk_metadata_files/LANDSAT_8.csv')
       .reply(200, csv);
@@ -56,7 +56,8 @@ describe('Elasticsearch tests', function () {
 
   after(function (done) {
     client.indices.delete({index: testIndex}).then(function () {
-      fs.removeSync(downloadDir);
+      fs.unlinkSync(downloadDir + '/landsat.csv');
+      fs.rmdirSync(downloadDir);
       self.server.hapi.stop(done);
     }).catch(function (err) {
       if (err) console.log(err);
