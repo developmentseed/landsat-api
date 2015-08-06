@@ -102,4 +102,4 @@ var landsatSchema = new mongoose.Schema({
     boundingBox: {type: mongoose.Schema.Types.Mixed, index: '2dsphere'}
 });
 
-module.exports = mongoose.model('landsat', landsatSchema);
+module.exports = mongoose.model('landsat8', landsatSchema);
