@@ -15,7 +15,7 @@ describe('Elasticsearch tests', function () {
   var testType = '8';
   var downloadDir = __dirname + '/download';
   var self = this;
-  var port = 2000
+  var port = 2000;
 
   before(function (done) {
     process.env['ES_INDEX'] = testIndex;
