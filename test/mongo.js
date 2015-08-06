@@ -3,6 +3,10 @@
 
 var async = require('async');
 var mongoose = require('mongoose');
+
+// Delete landsat model if previously registered
+delete mongoose.connection.models['landsat'];
+
 var moment = require('moment');
 var Landsat = require('../app/models/landsat.js');
 var Server = require('../app/services/server.js');
@@ -16,8 +20,8 @@ describe('MongoDb tests', function () {
 
   before(function (done) {
     // Set env to force use of mongodb
-    process.env['DB_TYPE'] = 'mongo';
-    process.env['MONGODB_URL'] = 'mongodb://localhost/landsat-test';
+    process.env.DB_TYPE = 'mongo';
+    process.env.MONGODB_URL = 'mongodb://localhost/landsat-test';
 
     self.server = new Server(port);
     self.server.start(function (err) {
