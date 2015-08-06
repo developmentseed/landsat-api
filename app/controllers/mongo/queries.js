@@ -1,6 +1,5 @@
 'use strict';
 
-var ejs = require('elastic.js');
 var _ = require('lodash');
 var moment = require('moment');
 var compile = require('monquery');
