@@ -18,9 +18,9 @@ describe('Elasticsearch tests', function () {
   var port = 2000;
 
   before(function (done) {
-    process.env['ES_INDEX'] = testIndex;
-    process.env['DB_TYPE'] = 'landsat';
-    process.env['ES_HOST'] = 'localhost:9200';
+    process.env.ES_INDEX = testIndex;
+    process.env.DB_TYPE = 'landsat';
+    process.env.ES_HOST = 'localhost:9200';
 
     // Add records to elasticsearch
     var csv = fs.readFileSync(__dirname + '/test_data.csv', {encoding: 'utf8'});
@@ -47,7 +47,7 @@ describe('Elasticsearch tests', function () {
       // Wait for 7000 ms
       setTimeout(function () {
         done();
-      }, 7000);
+      }, 4000);
     });
   });
 
