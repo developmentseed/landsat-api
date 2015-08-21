@@ -3,10 +3,7 @@ require('envloader').load();
 var Updater = require('landsat-meta-updater');
 var mongoose = require('mongoose');
 
-console.log(process.env.MONGODB_URL);
-
 var dbUrl = process.env.MONGODB_URL || 'mongodb://localhost/landsat-api';
-console.log(dbUrl);
 mongoose.connect(dbUrl);
 var db = mongoose.connection;
 
