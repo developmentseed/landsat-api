@@ -1,6 +1,7 @@
 'use strict';
 
 var queries = require('./queries.js');
+var boolifyString = require('boolify-string');
 
 module.exports = function (params, request, cb) {
   // The query object
@@ -21,7 +22,7 @@ module.exports = function (params, request, cb) {
   var skip = request.limit * (request.page - 1);
 
   // Summary fields
-  if (params.summary === true) {
+  if (boolifyString(params.summary)) {
     fields = {
       sceneID: 1,
       row: 1,
@@ -33,14 +34,6 @@ module.exports = function (params, request, cb) {
       browseURL: 1,
       browseAvailable: 1,
       sunAzimuth: 1,
-      upperLeftCornerLatitude: 1,
-      upperLeftCornerLongitude: 1,
-      upperRightCornerLatitude: 1,
-      upperRightCornerLongitude: 1,
-      lowerLeftCornerLatitude: 1,
-      lowerLeftCornerLongitude: 1,
-      lowerRightCornerLatitude: 1,
-      lowerRightCornerLongitude: 1,
       sceneCenterLatitude: 1,
       sceneCenterLongitude: 1,
       cloudCover: 1,
@@ -50,10 +43,10 @@ module.exports = function (params, request, cb) {
 
   var db = request.server.plugins['hapi-mongodb'].db;
   var collection = db.collection('landsats');
-  var query = collection.find(q, {skip: skip, fields: fields, hint: {"boundingBox": "2dsphere"}});
+  var query = collection.find(q, {skip: skip, limit: request.limit, fields: fields});
   query.toArray(function (err, records) {
     if (err) return cb(err);
-    query.count(function (err, count){
+    collection.find(q).count(function (err, count){
       cb(err, records, count);
     });
   });
