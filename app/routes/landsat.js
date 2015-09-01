@@ -72,7 +72,7 @@ module.exports = [
       if (request.payload) {
         params = request.payload;
 
-        //Crude hack for pagination lack of support for POST
+        // Crude hack for pagination lack of support for POST
         if (_.has(request.payload, 'page')) {
           request.page = _.parseInt(request.payload.page);
           request.payload = _.omit(request.payload, 'page');
@@ -94,7 +94,6 @@ module.exports = [
         request.count = count;
         return reply(records);
       });
-
     }
   }
 ];

@@ -19,7 +19,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test scene_id parameter', function (done) {
+  it('scene_id parameter should work', function (done) {
     request(url + '?scene_id=LC81560392015209LGN00', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -31,7 +31,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test cloud coverage less than 4', function (done) {
+  it('cloud coverage less than 4 should return 6 results', function (done) {
     request(url + '?cloud_to=4', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -43,7 +43,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test cloud coverage more than 4', function (done) {
+  it('cloud coverage more than 4 should return 4', function (done) {
     request(url + '?cloud_from=4', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -55,7 +55,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test cloud coverage from 21 to 36', function (done) {
+  it('cloud coverage from 21 to 36 should return 3', function (done) {
     request(url + '?cloud_from=21&cloud_to=36', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -67,7 +67,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test date from', function (done) {
+  it('date_from should return 10 records', function (done) {
     request(url + '?date_from=2015-07-28', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -79,7 +79,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test date to', function (done) {
+  it('date_to should return 0 records', function (done) {
     request(url + '?date_to=2015-07-27', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -91,7 +91,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test date from and to', function (done) {
+  it('date_from and date_to should return 10', function (done) {
     request(url + '?date_from=2015-07-27&date_to=2015-07-29', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -103,7 +103,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test intersects should return 1', function (done) {
+  it('intersects should return 1', function (done) {
     var geojson = '{ "type": "Feature", "properties": {}, "geometry": { \
         "type": "Polygon", \
         "coordinates": [ [ [ 53.23974609375, -5.900188795584159 ], \
@@ -122,7 +122,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test intersects should return 0', function (done) {
+  it('intersects should return 0', function (done) {
     var geojson = '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates": \
     [[[56.656494140625,-6.882800241767543],[56.6015625,-6.0094592380595495],[57.06298828124999,-5.954826733929911], \
     [57.37060546875,-6.719164960283201],[56.964111328125,-7.166300381903169],[56.99707031249999,-6.631870206172686], \
@@ -139,7 +139,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test contains should return one', function (done) {
+  it('contains should return one record', function (done) {
     request(url + '?contains=54.898681640625,-5.637852598770853', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -151,7 +151,7 @@ module.exports = function (port) {
     });
   });
 
-  it('test contains should return 0', function (done) {
+  it('contains should return 0 records', function (done) {
     request(url + '?contains=56.35986328125,-5.353521355337321', function (err, response, body) {
       if (err) {
         console.log(err);
@@ -163,7 +163,7 @@ module.exports = function (port) {
     });
   });
 
-  it('legacy search with sceneID', function (done) {
+  it('legacy search with sceneID should work', function (done) {
     var scene = 'LC81560422015209LGN00';
     request(url + '?search=sceneID:' + scene, function (err, response, body) {
       if (err) {
@@ -177,7 +177,7 @@ module.exports = function (port) {
     });
   });
 
-  it('legacy search multiple fields', function (done) {
+  it('legacy search multiple fields should work', function (done) {
     request(url + '?search=path:156+AND+row:41', function (err, response, body) {
       if (err) {
         console.log(err);

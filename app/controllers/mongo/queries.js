@@ -4,6 +4,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var compile = require('monquery');
 var gjv = require('geojson-validation');
+var validator = require('validator');
 var err = require('../errors.js');
 
 /**
@@ -127,6 +128,10 @@ var rangeQuery = function (from, to, field, query) {
   if (field in ['acquisitionDate', 'sceneStartTime', 'sceneStopTime']) {
     if (to) to = moment(to).format();
     if (from) from = moment(from).format();
+  }
+  else {
+    if (validator.isNumeric(to)) to = parseFloat(to);
+    if (validator.isNumeric(from)) from = parseFloat(from);
   }
 
   if (from && to) {
