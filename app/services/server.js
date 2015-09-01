@@ -1,6 +1,7 @@
 'use strict';
 
 var Hapi = require('hapi');
+var mongo = require('mongodb');
 
 var Server = function (port) {
   this.port = port;
@@ -40,9 +41,12 @@ Server.prototype.start = function (cb) {
   if (process.env.DB_TYPE === 'mongo') {
     // Register mongo-db connector
     self.hapi.register({
-      register: require('hapi-mongoose-db-connector'),
+      register: require('hapi-mongodb'),
       options: {
-        mongodbUrl: process.env.MONGODB_URL || 'mongodb://localhost/landsat-api'
+        'url': process.env.MONGODB_URL || 'mongodb://localhost/landsat-api',
+        'settings': {
+            "db": {}
+        }
       }
     }, function (err) {
       if (err) throw err;
