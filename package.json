@@ -48,7 +48,8 @@
     "request": "^2.57.0",
     "tmp": "0.0.27",
     "turf-area": "^1.1.1",
-    "turf-extent": "^1.0.4"
+    "turf-extent": "^1.0.4",
+    "validator": "^4.0.5"
   },
   "devDependencies": {
     "apidoc": "^0.13.1",
