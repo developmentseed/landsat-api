@@ -1,6 +1,5 @@
 'use strict';
 
-var Model = require('../../models/landsat.js');
 var queries = require('./queries.js');
 
 module.exports = function (params, request, cb) {
