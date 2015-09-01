@@ -11,7 +11,7 @@ MongoClient.connect(dbUrl, function (err, db) {
 
   var tmpobj = tmp.dirSync();
 
-  var u = new Updater('landsat', '8', 1000, tmpobj);
+  var u = new Updater('landsat', '8', 1000, tmpobj.name);
 
   console.log('connected');
   u.updateMongoDb(dbUrl, function (err, msg) {
