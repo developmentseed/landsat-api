@@ -5,8 +5,6 @@ var MongoClient = require('mongodb').MongoClient;
 var tmp = require('tmp');
 
 var dbUrl = process.env.MONGODB_URL || 'mongodb://localhost/landsat-api';
-mongoose.connect(dbUrl);
-var db = mongoose.connection;
 
 MongoClient.connect(dbUrl, function (err, db) {
   if (err) return console.log(err);
