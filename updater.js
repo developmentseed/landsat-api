@@ -1,20 +1,20 @@
 'use strict';
 require('envloader').load();
 var Updater = require('landsat-meta-updater');
-var mongoose = require('mongoose');
+var MongoClient = require('mongodb').MongoClient;
 var tmp = require('tmp');
 
 var dbUrl = process.env.MONGODB_URL || 'mongodb://localhost/landsat-api';
 mongoose.connect(dbUrl);
 var db = mongoose.connection;
 
-// Temp folder
-var tmpobj = tmp.dirSync();
+MongoClient.connect(dbUrl, function (err, db) {
+  if (err) return console.log(err);
 
-var u = new Updater('landsat', '8', 1000, tmpobj);
+  var tmpobj = tmp.dirSync();
 
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+  var u = new Updater('landsat', '8', 1000, tmpobj);
+
   console.log('connected');
   u.updateMongoDb(dbUrl, function (err, msg) {
     if (err) {
