@@ -6,15 +6,16 @@ var expect = require('chai').expect;
 
 module.exports = function (port) {
   var url = 'http://127.0.0.1:' + port + '/landsat';
+  var urlCount = 'http://127.0.0.1:' + port + '/count';
 
   it('should have 10 records', function (done) {
-    request(url, function (err, response, body) {
+    request(urlCount, function (err, response, body) {
       if (err) {
         console.log(err);
       }
       expect(response.statusCode).to.equal(200);
       var res = JSON.parse(body);
-      expect(res.meta.found).to.equal(10);
+      expect(res.results.count).to.equal(10);
       done();
     });
   });
