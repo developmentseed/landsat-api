@@ -233,7 +233,7 @@ module.exports = function (params, query, limit) {
 
   // Do legacy search
   if (params.search || params.count) {
-    // return legacyParams(params, q, limit);
+    return legacyParams(params, q, limit);
   }
 
   if (params.contains) {

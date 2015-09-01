@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Boom = require('boom');
 var esList = require('../controllers/es/landsat.js');
+var esCount = require('../controllers/es/count.js');
 var mongoList = require('../controllers/mongo/landsat.js');
 var mongoCount = require('../controllers/mongo/count.js');
 var landsat;
