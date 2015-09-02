@@ -74,12 +74,8 @@ var intersects = function (params, query) {
   var geojson = tools.parseGeoJson(params);
 
   if (gjv.valid(geojson)) {
-
-    // calculate area
-    var area = turfArea(geojson) / 1000000;
-
     // If it is smaller than Nigeria use geohash
-    if (area < 500000) {
+    if (tools.areaNotLarge(geojson)) {
       if (geojson.type === 'FeatureCollection') {
         for (var i=0; i < geojson.features.length; i++) {
           var feature = geojson.features[i];
