@@ -104,6 +104,25 @@ module.exports = function (port) {
     });
   });
 
+  it('with large area polygon, intersects should return 10', function (done) {
+    var geojson = '{ "type": "Feature", "properties": {}, "geometry": { \
+        "type": "Polygon", \
+        "coordinates": [[[-167.34375,80.4157074446218],[-161.71874999999997,-59.88893689676582], \
+        [-61.87499999999999,-70.14036427207168],[59.0625,-77.91566898632583],[230.62499999999997, \
+        -73.8248203461393],[211.640625,-10.487811882056695],[189.84375,48.922499263758255],[188.4375, \
+        77.31251993823143],[-167.34375,80.4157074446218]]] } }';
+
+    request(url + '?intersects=' + geojson, function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(10);
+      done();
+    });
+  });
+
   it('intersects should return 1', function (done) {
     var geojson = '{ "type": "Feature", "properties": {}, "geometry": { \
         "type": "Polygon", \
