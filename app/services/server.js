@@ -62,7 +62,7 @@ Server.prototype.start = function (cb) {
         license: 'CC0-1.0',
         website: process.env.RESPONSE_HEADER_SERVER || 'https://api.developmentseed.org/landsat'
       },
-      routes: ['/landsat']
+      routes: ['/landsat', '/count']
     }
   }, function (err) {
     if (err) throw err;

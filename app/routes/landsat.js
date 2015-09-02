@@ -2,8 +2,10 @@
 
 var _ = require('lodash');
 var Boom = require('boom');
-var es = require('../controllers/es/landsat.js');
-var mongo = require('../controllers/mongo/landsat.js');
+var esList = require('../controllers/es/landsat.js');
+var esCount = require('../controllers/es/count.js');
+var mongoList = require('../controllers/mongo/landsat.js');
+var mongoCount = require('../controllers/mongo/count.js');
 var landsat;
 
 /**
@@ -56,33 +58,12 @@ module.exports = [
     handler: function (request, reply) {
       // Determine whether to use MongoDB or ElasticSearch
       if (process.env.DB_TYPE === 'mongo') {
-        landsat = mongo;
+        landsat = mongoList;
       } else {
-        landsat = es;
+        landsat = esList;
       }
 
-      var params = {};
-
-      // For GET
-      if (request.query) {
-        params = request.query;
-      }
-
-      // For POST
-      if (request.payload) {
-        params = request.payload;
-
-        // Crude hack for pagination lack of support for POST
-        if (_.has(request.payload, 'page')) {
-          request.page = _.parseInt(request.payload.page);
-          request.payload = _.omit(request.payload, 'page');
-        }
-
-        if (_.has(request.payload, 'limit')) {
-          request.limit = _.parseInt(request.payload.limit);
-          request.payload = _.omit(request.payload, 'limit');
-        }
-      }
+      var params = prepareRequest(request);
 
       // Send for processing
       landsat(params, request, function (err, records, count) {
@@ -95,5 +76,65 @@ module.exports = [
         return reply(records);
       });
     }
-  }
+  },
+
+  {
+    method: ['GET', 'POST'],
+    path: '/count',
+    handler: function (request, reply) {
+      // Determine whether to use MongoDB or ElasticSearch
+      if (process.env.DB_TYPE === 'mongo') {
+        landsat = mongoCount;
+      } else {
+        landsat = esCount;
+      }
+
+      var params = prepareRequest(request);
+
+      // Send for processing
+      landsat(params, request, function (err, count) {
+        if (err) {
+          request.log(err);
+          return reply(err);
+        }
+
+        return reply({"count": count});
+        //     {
+        //       "name": "landsat-api",
+        //       "license": "CC0-1.0",
+        //       "website": "https://api.developmentseed.org/landsat",
+        //       "found": count
+        //     }
+        // });
+      });
+    }
+  },
+
 ];
+
+var prepareRequest = function (request) {
+  var params = {};
+
+  // For GET
+  if (request.query) {
+    params = request.query;
+  }
+
+  // For POST
+  if (request.payload) {
+    params = request.payload;
+
+    // Crude hack for pagination lack of support for POST
+    if (_.has(request.payload, 'page')) {
+      request.page = _.parseInt(request.payload.page);
+      request.payload = _.omit(request.payload, 'page');
+    }
+
+    if (_.has(request.payload, 'limit')) {
+      request.limit = _.parseInt(request.payload.limit);
+      request.payload = _.omit(request.payload, 'limit');
+    }
+  }
+
+  return params
+};
