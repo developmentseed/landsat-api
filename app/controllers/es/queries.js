@@ -87,10 +87,8 @@ var intersects = function (params, query) {
     } else {
       // Query for min and max lat and long
       var bbox = turfExtent(geojson);
-      query = rangeQuery(bbox[0], bbox[2], 'lowerLeftCornerLongitude', query)
-      query = rangeQuery(bbox[0], bbox[2], 'upperRightCornerLongitude', query)
-      query = rangeQuery(bbox[1], bbox[3], 'upperLeftCornerLatitude', query)
-      query = rangeQuery(bbox[1], bbox[3], 'lowerRightCornerLatitude', query)
+      query = rangeQuery(bbox[0], bbox[2], 'sceneCenterLongitude', query)
+      query = rangeQuery(bbox[1], bbox[3], 'sceneCenterLatitude', query)
     }
 
     return query
