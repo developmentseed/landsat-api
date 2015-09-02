@@ -135,8 +135,8 @@ var rangeQuery = function (from, to, field, query) {
     if (from) from = moment(from).format();
   }
   else {
-    if (validator.isNumeric(to)) to = parseFloat(to);
-    if (validator.isNumeric(from)) from = parseFloat(from);
+    if (validator.isNumeric(to) || validator.isDecimal(to)) to = parseFloat(to);
+    if (validator.isNumeric(from) || validator.isDecimal(from)) from = parseFloat(from);
   }
 
   if (from && to) {
@@ -166,6 +166,7 @@ var rangeQuery = function (from, to, field, query) {
  *
 **/
 var termQuery = function (param, field, query) {
+  if (field === 'dayOrNight') param = param.toUpperCase();
   query[field] = param;
   return query;
 };
