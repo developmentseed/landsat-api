@@ -5,7 +5,7 @@ var moment = require('moment');
 var compile = require('monquery');
 var gjv = require('geojson-validation');
 var validator = require('validator');
-var err = require('../errors.js');
+var err = require('../../libs/errors.js');
 
 /**
  * @apiDefine search
