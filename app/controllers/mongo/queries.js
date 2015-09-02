@@ -70,14 +70,17 @@ var intersects = function (params, query) {
     if (tools.areaNotLarge(geojson)) {
       var geometry;
       if (geojson.type === 'FeatureCollection') {
-        geometry = geojson.features[0].geometry;
+        query['$or'] = [];
+        for (var i=0; i < geojson.features.length; i++) {
+          geometry = geojson.features[i].geometry;
+          query['$or'].push({ boundingBox: {$geoIntersects: { $geometry: geometry } } })
+        }
       }
-
-      if (geojson.type === 'Feature') {
+      else {
         geometry = geojson.geometry;
+        query.boundingBox = { $geoIntersects: { $geometry: geometry } };
       }
 
-      query.boundingBox = { $geoIntersects: { $geometry: geometry } };
     } else {
       var bbox = turfExtent(geojson);
       query.sceneCenterLatitude = {$gte: bbox[1], $lte: bbox[3]};

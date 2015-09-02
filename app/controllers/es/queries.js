@@ -31,7 +31,7 @@ var legacyParams = function (params, q, limit) {
 
 var geojsonQueryBuilder = function (feature, query) {
   var shape = ejs.Shape(feature.geometry.type, feature.geometry.coordinates);
-  query = query.must(ejs.GeoShapeQuery()
+  query = query.should(ejs.GeoShapeQuery()
                           .field('boundingBox')
                           .shape(shape));
   return query;

@@ -159,6 +159,45 @@ module.exports = function (port) {
     });
   });
 
+  it('FeatureCollection with single feature geojson intersects should return 1', function (done) {
+    var geojson = '{"type": "FeatureCollection","features": [{"type":"Feature","properties":{},"geometry": \
+    {"type":"Polygon","coordinates":[[[61.07299804687501,29.046565622728846],[61.424560546875,29.44916482692468], \
+    [61.92993164062499,29.0273547804184],[61.622314453125,28.76765910569123],[61.07299804687501, \
+    29.046565622728846]]]}}]}';
+
+    request(url + '?intersects=' + geojson, function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(1);
+      done();
+    });
+  });
+
+  it('FeatureCollection with multiple features geojson intersects should return 3', function (done) {
+    var geojson = '{"type": "FeatureCollection","features": [{"type":"Feature","properties":{},"geometry": \
+    {"type":"Polygon","coordinates":[[[61.07299804687501,29.046565622728846],[61.424560546875,29.44916482692468], \
+    [61.92993164062499,29.0273547804184],[61.622314453125,28.76765910569123],[61.07299804687501, \
+    29.046565622728846]]]}}, {"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates": \
+    [[[62.95166015624999,25.849336891707605],[62.60009765624999,26.11598592533351],[62.237548828125, \
+    25.720735134412106],[62.75390625,25.572175556682144],[62.95166015624999,25.849336891707605]]]}}, \
+    {"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[60.8203125,24.44714958973082], \
+    [61.01806640624999,24.926294766395593],[61.292724609375,24.53712939907994],[61.12792968750001, \
+    24.066528197726857],[60.8203125,24.44714958973082]]]}}]}';
+
+    request(url + '?intersects=' + geojson, function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(3);
+      done();
+    });
+  });
+
   it('contains should return one record', function (done) {
     request(url + '?contains=54.898681640625,-5.637852598770853', function (err, response, body) {
       if (err) {
