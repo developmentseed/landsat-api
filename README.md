@@ -1,12 +1,12 @@
 ## Landsat8 Metadata API
 
-This is an API for NASA/USGS Landsat-8 images. Landsat-api enables you to make date, text and geospatial queries on Landsat-8 metadata.
+This is an API for NASA/USGS Landsat-8 images. Landsat-api enables you to make geospatial, date and text queries on Landsat-8 metadata.
 
 The metadata is released in csv format by USGS on a daily basis. You can download the raw metadata from [here](http://landsat.usgs.gov/metadata_service/bulk_metadata_files/LANDSAT_8.csv).
 
 Landsat-api needs a database for storage and query of the metadata. It supports both Elasticsearch and MongoDb as data stores.
 
-Landsat-api powers a number of projects including [Libra](https://libra.developmentseed.org) and AstoriDigtal's [Imagery Browser](https://fetch.astrodigital.com).
+Landsat-api powers a number of projects including [Libra](https://libra.developmentseed.org) and AstroDigtal's [Imagery Browser](https://fetch.astrodigital.com).
 
 #### Dependencies
 
