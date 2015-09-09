@@ -19,6 +19,17 @@ Server.prototype.start = function (cb) {
         stripTrailingSlash: true
       }
     },
+    cache: [
+      {
+        name: 'redisCache',
+        engine: require('catbox-redis'),
+        partition: 'cache',
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        password: process.env.REDIS_PASSWORD || '',
+        database: process.env.REDIS_DATABASE || '',
+        port: process.env.REDIS_PORT || '6379'
+      }
+    ],
     debug: process.env.OR_DEBUG ? {
       log: [ 'error' ],
       request: [ 'error', 'received', 'response' ]
