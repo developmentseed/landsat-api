@@ -1,7 +1,6 @@
 'use strict';
 
 var Hapi = require('hapi');
-var mongo = require('mongodb');
 
 var Server = function (port) {
   this.port = port;
@@ -45,7 +44,7 @@ Server.prototype.start = function (cb) {
       options: {
         'url': process.env.MONGODB_URL || 'mongodb://localhost/landsat-api',
         'settings': {
-            "db": {}
+            'db': {}
         }
       }
     }, function (err) {
