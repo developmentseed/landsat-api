@@ -36,6 +36,14 @@ module.exports = function (params, request, cb) {
       sunAzimuth: 1,
       sceneCenterLatitude: 1,
       sceneCenterLongitude: 1,
+      upperLeftCornerLatitude: 1,
+      upperLeftCornerLongitude: 1,
+      upperRightCornerLatitude: 1,
+      upperRightCornerLongitude: 1,
+      lowerLeftCornerLatitude: 1,
+      lowerLeftCornerLongitude: 1,
+      lowerRightCornerLatitude: 1,
+      lowerRightCornerLongitude: 1,
       cloudCover: 1,
       boundingBox: 1
     };
@@ -47,7 +55,10 @@ module.exports = function (params, request, cb) {
   query.toArray(function (err, records) {
     if (err) return cb(err);
     collection.find(q).count(function (err, count) {
-      cb(err, records, count);
+      request.count = count;
+
+      // Stay valid for 24 hours in cache
+      cb(err, records, 86400000);
     });
   });
 };

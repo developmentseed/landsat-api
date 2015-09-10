@@ -3,10 +3,11 @@
 var err = require('./errors.js');
 var turfArea = require('turf-area');
 var validator = require('validator');
+var areaLimit;
 
 var parseGeoJson = function (geojson) {
   // if we receive an object, assume it's GeoJSON, if not, try and parse
-  if (typeof(geojson) === 'object') {
+  if (typeof geojson === 'object') {
     return geojson;
   } else {
     try {
@@ -19,13 +20,11 @@ var parseGeoJson = function (geojson) {
 
 module.exports.parseGeoJson = parseGeoJson;
 
-
 var areaNotLarge = function (geojson) {
   if (validator.isNumeric(process.env.AREA_LIMIT)) {
-    var areaLimit = parseInt(process.env.AREA_LIMIT);
-  }
-  else {
-    var areaLimit = 500000;
+    areaLimit = parseInt(process.env.AREA_LIMIT, 10);
+  } else {
+    areaLimit = 500000;
   }
 
   // calculate area
@@ -34,10 +33,16 @@ var areaNotLarge = function (geojson) {
   // If it is smaller than Nigeria use geohash
   if (area < areaLimit) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
-}
+};
 
 module.exports.areaNotLarge = areaNotLarge;
+
+// This is a custom key generation function for hapi cache system
+var customGenerateKey = function (params, request) {
+  return request.url.path + '?' + JSON.stringify(params);
+};
+
+module.exports.customGenerateKey = customGenerateKey;

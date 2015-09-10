@@ -1,12 +1,33 @@
 'use strict';
 
 var _ = require('lodash');
-var Boom = require('boom');
-var esList = require('../controllers/es/landsat.js');
-var esCount = require('../controllers/es/count.js');
-var mongoList = require('../controllers/mongo/landsat.js');
-var mongoCount = require('../controllers/mongo/count.js');
-var landsat;
+
+var prepareRequest = function (request) {
+  var params = {};
+
+  // For GET
+  if (request.query) {
+    params = request.query;
+  }
+
+  // For POST
+  if (request.payload) {
+    params = request.payload;
+
+    // Crude hack for pagination lack of support for POST
+    if (_.has(request.payload, 'page')) {
+      request.page = _.parseInt(request.payload.page);
+      request.payload = _.omit(request.payload, 'page');
+    }
+
+    if (_.has(request.payload, 'limit')) {
+      request.limit = _.parseInt(request.payload.limit);
+      request.payload = _.omit(request.payload, 'limit');
+    }
+  }
+
+  return params;
+};
 
 /**
  * @api {get} /landsat GET
@@ -56,85 +77,34 @@ module.exports = [
     method: ['GET', 'POST'],
     path: '/landsat',
     handler: function (request, reply) {
-      // Determine whether to use MongoDB or ElasticSearch
-      if (process.env.DB_TYPE === 'mongo') {
-        landsat = mongoList;
-      } else {
-        landsat = esList;
-      }
-
       var params = prepareRequest(request);
 
       // Send for processing
-      landsat(params, request, function (err, records, count) {
+      request.server.methods.landsat(params, request, function (err, records) {
         if (err) {
           request.log(err);
           return reply(err);
         }
 
-        request.count = count;
         return reply(records);
       });
     }
   },
-
   {
     method: ['GET', 'POST'],
     path: '/count',
     handler: function (request, reply) {
-      // Determine whether to use MongoDB or ElasticSearch
-      if (process.env.DB_TYPE === 'mongo') {
-        landsat = mongoCount;
-      } else {
-        landsat = esCount;
-      }
-
       var params = prepareRequest(request);
 
       // Send for processing
-      landsat(params, request, function (err, count) {
+      request.server.methods.count(params, request, function (err, count) {
         if (err) {
           request.log(err);
           return reply(err);
         }
 
-        return reply({"count": count});
-        //     {
-        //       "name": "landsat-api",
-        //       "license": "CC0-1.0",
-        //       "website": "https://api.developmentseed.org/landsat",
-        //       "found": count
-        //     }
-        // });
+        return reply({'count': count});
       });
     }
-  },
-
+  }
 ];
-
-var prepareRequest = function (request) {
-  var params = {};
-
-  // For GET
-  if (request.query) {
-    params = request.query;
-  }
-
-  // For POST
-  if (request.payload) {
-    params = request.payload;
-
-    // Crude hack for pagination lack of support for POST
-    if (_.has(request.payload, 'page')) {
-      request.page = _.parseInt(request.payload.page);
-      request.payload = _.omit(request.payload, 'page');
-    }
-
-    if (_.has(request.payload, 'limit')) {
-      request.limit = _.parseInt(request.payload.limit);
-      request.payload = _.omit(request.payload, 'limit');
-    }
-  }
-
-  return params
-};
