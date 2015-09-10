@@ -41,8 +41,8 @@ var areaNotLarge = function (geojson) {
 module.exports.areaNotLarge = areaNotLarge;
 
 // This is a custom key generation function for hapi cache system
-var customGenerateKey = function (params) {
-  return JSON.stringify(params);
+var customGenerateKey = function (params, request) {
+  return request.url.path + '?' + JSON.stringify(params);
 };
 
 module.exports.customGenerateKey = customGenerateKey;
