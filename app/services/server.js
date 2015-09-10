@@ -1,6 +1,9 @@
 'use strict';
 
 var Hapi = require('hapi');
+var boolifyString = require('boolify-string');
+var landsat = require('../controllers/es/landsat.js');
+var customGenerateKey = require('../libs/shared.js').customGenerateKey;
 
 var Server = function (port) {
   this.port = port;
@@ -10,7 +13,7 @@ var Server = function (port) {
 Server.prototype.start = function (cb) {
   var self = this;
 
-  self.hapi = new Hapi.Server({
+  var hapiOptions = {
     connections: {
       routes: {
         cors: true
@@ -19,9 +22,21 @@ Server.prototype.start = function (cb) {
         stripTrailingSlash: true
       }
     },
-    cache: [
+    debug: process.env.OR_DEBUG ? {
+      log: [ 'error' ],
+      request: [ 'error', 'received', 'response' ]
+    } : false
+  };
+
+  var methodCacheOptions = {
+    expiresAt: '00:00',
+    generateTimeout: 10000
+  };
+
+  // Whether to use REDIS as cache
+  if (boolifyString(process.env.REDIS_USE)) {
+    hapiOptions.cache = [
       {
-        name: 'redisCache',
         engine: require('catbox-redis'),
         partition: 'cache',
         host: process.env.REDIS_HOST || '127.0.0.1',
@@ -29,13 +44,13 @@ Server.prototype.start = function (cb) {
         database: process.env.REDIS_DATABASE || '',
         port: process.env.REDIS_PORT || '6379'
       }
-    ],
-    debug: process.env.OR_DEBUG ? {
-      log: [ 'error' ],
-      request: [ 'error', 'received', 'response' ]
-    } : false
-  });
+    ];
+  }
 
+  // Initial Hapi
+  self.hapi = new Hapi.Server(hapiOptions);
+
+  // Specify the port to use
   self.hapi.connection({ port: this.port });
 
   // Register hapi-router
@@ -48,7 +63,10 @@ Server.prototype.start = function (cb) {
     if (err) throw err;
   });
 
+  // Register Mongo Connnector if the system uses MongoDb
   if (process.env.DB_TYPE === 'mongo') {
+    landsat = require('../controllers/mongo/landsat.js');
+
     // Register mongo-db connector
     self.hapi.register({
       register: require('hapi-mongodb'),
@@ -89,7 +107,7 @@ Server.prototype.start = function (cb) {
     if (err) throw err;
   });
 
-  // Register good logger
+  // Good logger options
   var options = {
     opsInterval: 1000,
     reporters: [{
@@ -98,6 +116,7 @@ Server.prototype.start = function (cb) {
     }]
   };
 
+  // Register Monitoring/Logger plugin
   self.hapi.register({
     register: require('good'),
     options: options
@@ -105,6 +124,13 @@ Server.prototype.start = function (cb) {
     if (err) throw err;
   });
 
+  // Register Landsat method
+  self.hapi.method('landsat', landsat, {
+    cache: methodCacheOptions,
+    generateKey: customGenerateKey
+  });
+
+  // Start Hapi Server
   self.hapi.start(function () {
     self.hapi.log(['info'], 'Server running at:' + self.hapi.info.uri);
     if (cb) {
