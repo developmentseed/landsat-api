@@ -3,6 +3,7 @@
 var Hapi = require('hapi');
 var boolifyString = require('boolify-string');
 var landsat = require('../controllers/es/landsat.js');
+var count = require('../controllers/es/count.js');
 var customGenerateKey = require('../libs/shared.js').customGenerateKey;
 
 var Server = function (port) {
@@ -65,7 +66,9 @@ Server.prototype.start = function (cb) {
 
   // Register Mongo Connnector if the system uses MongoDb
   if (process.env.DB_TYPE === 'mongo') {
+    // Switch controllers to mongo
     landsat = require('../controllers/mongo/landsat.js');
+    count = require('../controllers/mongo/count.js');
 
     // Register mongo-db connector
     self.hapi.register({
@@ -126,6 +129,12 @@ Server.prototype.start = function (cb) {
 
   // Register Landsat method
   self.hapi.method('landsat', landsat, {
+    cache: methodCacheOptions,
+    generateKey: customGenerateKey
+  });
+
+  // Register Landsat method
+  self.hapi.method('count', count, {
     cache: methodCacheOptions,
     generateKey: customGenerateKey
   });
