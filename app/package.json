@@ -1,0 +1,36 @@
+{
+  "name": "landsat-api",
+  "version": "0.0.1",
+  "description": "An API for USGS Landsat8 imagery metadata.",
+  "author": "developmentseed",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developmentseed/landsat-util"
+  },
+  "dependencies": {
+    "bunyan": "~0.22.3",
+    "elastic.js": "~1.1.1",
+    "elasticsearch": "~2.1.4",
+    "express": "~3.5.2",
+    "forever": "~0.11.1",
+    "fs-extra": "^0.18.0",
+    "moment": "~2.6.0",
+    "newrelic": "^1.18.2",
+    "node-env-file": "^0.1.7",
+    "underscore": "~1.6.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-nodeunit": "~0.3.3"
+  },
+  "scripts": {
+    "start": "node api.js",
+    "test": "grunt nodeunit:all"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "license": "CC0",
+  "subdomain": "api"
+}
