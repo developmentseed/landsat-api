@@ -54,10 +54,16 @@ module.exports = function (params, request, cb) {
         response.push(body.hits.hits[i]._source);
       }
     }
-    request.count = count;
+
+    var r = {
+      meta: {
+        found: count
+      },
+      results: response
+    };
 
     // Stay valid for 24 hours in cache
-    return cb(err, response, 86400000);
+    return cb(err, r, 86400000);
   }, function (err) {
     return cb(Boom.badRequest(err));
   });
