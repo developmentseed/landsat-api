@@ -30,7 +30,7 @@
     "catbox-redis": "^1.0.5",
     "csv": "^0.4.2",
     "elastic.js": "^1.2.0",
-    "elasticsearch": "^4.1.0",
+    "elasticsearch": "^8.2.0",
     "envloader": "0.0.2",
     "geojson-validation": "^0.1.5",
     "good": "^6.3.0",
