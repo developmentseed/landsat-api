@@ -3,8 +3,12 @@
 var _ = require('lodash');
 var moment = require('moment');
 var compile = require('monquery');
+var turfArea = require('turf-area');
+var turfExtent = require('turf-extent');
 var gjv = require('geojson-validation');
-var err = require('../errors.js');
+var validator = require('validator');
+var err = require('../../libs/errors.js');
+var tools = require('../../libs/shared.js');
 
 /**
  * @apiDefine search
@@ -58,28 +62,30 @@ var contains = function (params, query) {
 **/
 var intersects = function (params, query) {
   // if we receive an object, assume it's GeoJSON, if not, try and parse
-  var geojson;
-  if (typeof (params) === 'object') {
-    geojson = params;
-  } else {
-    try {
-      geojson = JSON.parse(params);
-    } catch (e) {
-      err.invalidGeoJsonError();
-    }
-  }
+  var geojson = tools.parseGeoJson(params);
 
   if (gjv.valid(geojson)) {
-    var geometry;
-    if (geojson.type === 'FeatureCollection') {
-      geometry = geojson.features[0].geometry;
-    }
 
-    if (geojson.type === 'Feature') {
-      geometry = geojson.geometry;
-    }
+    // Check Area
+    if (tools.areaNotLarge(geojson)) {
+      var geometry;
+      if (geojson.type === 'FeatureCollection') {
+        query['$or'] = [];
+        for (var i=0; i < geojson.features.length; i++) {
+          geometry = geojson.features[i].geometry;
+          query['$or'].push({ boundingBox: {$geoIntersects: { $geometry: geometry } } })
+        }
+      }
+      else {
+        geometry = geojson.geometry;
+        query.boundingBox = { $geoIntersects: { $geometry: geometry } };
+      }
 
-    query.boundingBox = { $geoIntersects: { $geometry: geometry } };
+    } else {
+      var bbox = turfExtent(geojson);
+      query.sceneCenterLatitude = {$gte: bbox[1], $lte: bbox[3]};
+      query.sceneCenterLongitude = {$gte: bbox[0], $lte: bbox[2]};
+    }
     return query;
   } else {
     err.invalidGeoJsonError();
@@ -128,6 +134,10 @@ var rangeQuery = function (from, to, field, query) {
     if (to) to = moment(to).format();
     if (from) from = moment(from).format();
   }
+  else {
+    if (validator.isNumeric(to) || validator.isDecimal(to)) to = parseFloat(to);
+    if (validator.isNumeric(from) || validator.isDecimal(from)) from = parseFloat(from);
+  }
 
   if (from && to) {
     query[field] = {$gte: from, $lte: to};
@@ -156,6 +166,7 @@ var rangeQuery = function (from, to, field, query) {
  *
 **/
 var termQuery = function (param, field, query) {
+  if (field === 'dayOrNight') param = param.toUpperCase();
   query[field] = param;
   return query;
 };
@@ -228,7 +239,7 @@ module.exports = function (params, query, limit) {
 
   // Do legacy search
   if (params.search || params.count) {
-    // return legacyParams(params, q, limit);
+    return legacyParams(params, q, limit);
   }
 
   if (params.contains) {

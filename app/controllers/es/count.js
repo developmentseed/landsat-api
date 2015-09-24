@@ -37,33 +37,7 @@ module.exports = function (params, request, cb) {
   }
 
   client.search(search_params).then(function (body) {
-    var response = [];
-    var count = 0;
-
-    // Process Facets
-    if (params.count) {
-      // Term facet count
-      response = body.facets.count.terms;
-      count = body.facets.count.total;
-
-    // Process search
-    } else {
-      count = body.hits.total;
-
-      for (var i = 0; i < body.hits.hits.length; i++) {
-        response.push(body.hits.hits[i]._source);
-      }
-    }
-
-    var r = {
-      meta: {
-        found: count
-      },
-      results: response
-    };
-
-    // Stay valid for 24 hours in cache
-    return cb(err, r, 86400000);
+    return cb(err, body.hits.total);
   }, function (err) {
     return cb(Boom.badRequest(err));
   });

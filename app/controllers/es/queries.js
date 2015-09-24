@@ -5,7 +5,8 @@ var _ = require('lodash');
 var turfArea = require('turf-area');
 var turfExtent = require('turf-extent');
 var gjv = require('geojson-validation');
-var err = require('../errors.js')
+var err = require('../../libs/errors.js');
+var tools = require('../../libs/shared.js');
 
 /**
  * @apiDefine search
@@ -30,7 +31,7 @@ var legacyParams = function (params, q, limit) {
 
 var geojsonQueryBuilder = function (feature, query) {
   var shape = ejs.Shape(feature.geometry.type, feature.geometry.coordinates);
-  query = query.must(ejs.GeoShapeQuery()
+  query = query.should(ejs.GeoShapeQuery()
                           .field('boundingBox')
                           .shape(shape));
   return query;
@@ -70,26 +71,11 @@ var contains = function (params, query) {
 **/
 var intersects = function (params, query) {
   // if we receive an object, assume it's GeoJSON, if not, try and parse
-  var geojson;
-  if (typeof(params) === 'object') {
-    geojson = params;
-  } else {
-    try {
-      geojson = JSON.parse(params);
-    } catch (e) {
-      err.invalidGeoJsonError();
-    }
-  }
+  var geojson = tools.parseGeoJson(params);
 
   if (gjv.valid(geojson)) {
-
-    // calculate area
-    var area = turfArea(geojson) / 1000000;
-
-    console.log(area);
-
     // If it is smaller than Nigeria use geohash
-    if (area < 500000) {
+    if (tools.areaNotLarge(geojson)) {
       if (geojson.type === 'FeatureCollection') {
         for (var i=0; i < geojson.features.length; i++) {
           var feature = geojson.features[i];
@@ -101,10 +87,8 @@ var intersects = function (params, query) {
     } else {
       // Query for min and max lat and long
       var bbox = turfExtent(geojson);
-      query = rangeQuery(bbox[0], bbox[2], 'lowerLeftCornerLongitude', query)
-      query = rangeQuery(bbox[0], bbox[2], 'upperRightCornerLongitude', query)
-      query = rangeQuery(bbox[1], bbox[3], 'upperLeftCornerLatitude', query)
-      query = rangeQuery(bbox[1], bbox[3], 'lowerRightCornerLatitude', query)
+      query = rangeQuery(bbox[0], bbox[2], 'sceneCenterLongitude', query)
+      query = rangeQuery(bbox[1], bbox[3], 'sceneCenterLatitude', query)
     }
 
     return query
