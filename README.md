@@ -28,6 +28,11 @@ Set environment variables on your system or add an `.env` file to the root direc
   - `ES_HOST=example.com:9200` if you are using ElasticSearch
   - `MONGODB_URL=mongodb://user:pass@example.com:11111/db_name` if you use MongoDb
   - `AREA_LIMIT=500000` The area limit in (sq. km) for use in geo-spatial queries.
+  - `REDIS_USE=true` Whether to active the caching. Default is false.
+  - `REDIS_HOST=127.0.0.1` default is `127.0.0.1`
+  - `REDIS_PASSWORD=redispassword` Redis db password. Default is null.
+  - `REDIS_DATABASE=myredisdb` Name of the redis db. Default is null.
+  - `REDIS_PORT=6379` Redis port. Default is 6379.
 
 #### Run
 

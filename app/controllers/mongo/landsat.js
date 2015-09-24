@@ -55,10 +55,15 @@ module.exports = function (params, request, cb) {
   query.toArray(function (err, records) {
     if (err) return cb(err);
     collection.find(q).count(function (err, count) {
-      request.count = count;
+      var r = {
+        meta: {
+          found: count
+        },
+        results: records
+      };
 
       // Stay valid for 24 hours in cache
-      cb(err, records, 86400000);
+      cb(err, r, 86400000);
     });
   });
 };
