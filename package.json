@@ -1,6 +1,6 @@
 {
   "name": "landsat-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An API for USGS Landsat8 imagery metadata",
   "main": "index.js",
   "scripts": {
