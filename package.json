@@ -46,7 +46,7 @@
     "mongodb": "^2.0.42",
     "monquery": "^0.2.0",
     "nock": "^2.9.1",
-    "request": "^2.57.0",
+    "request": "^2.60.0",
     "tmp": "0.0.27",
     "turf-area": "^1.1.1",
     "turf-extent": "^1.0.4",
@@ -56,8 +56,7 @@
     "apidoc": "^0.13.1",
     "chai": "^3.2.0",
     "fs-extra": "^0.22.1",
-    "mocha": "^2.2.5",
-    "request": "^2.60.0"
+    "mocha": "^2.2.5"
   },
   "apidoc": {
     "title": "landsat-api",
