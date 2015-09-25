@@ -1,6 +1,8 @@
 ## Landsat8 Metadata API
 
 [![Build Status](https://travis-ci.org/developmentseed/landsat-api.svg?branch=develop)](https://travis-ci.org/developmentseed/landsat-api)
+[![on docker](https://img.shields.io/badge/docker-available-green.svg)](https://hub.docker.com/r/developmentseed/landsat-api/)
+
 
 This is an API for NASA/USGS Landsat-8 images. Landsat-api enables you to make geospatial, date and text queries on Landsat-8 metadata.
 
@@ -9,6 +11,23 @@ The metadata is released in csv format by USGS on a daily basis. You can downloa
 Landsat-api needs a database for storage and query of the metadata. It supports both Elasticsearch and MongoDb as data stores.
 
 Landsat-api powers a number of projects including [Libra](https://libra.developmentseed.org) and AstroDigtal's [Imagery Browser](https://fetch.astrodigital.com).
+
+#### Docker
+
+Make sure your docker installed and started.
+
+To use docker for local testing do:
+
+    $ docker-compose run test
+
+To develop with docker locally:
+
+    $ docker-compose up dev
+
+Docker container clean up:
+
+    $ docker-compose stop
+    $ docker-compose rm
 
 #### Dependencies
 
@@ -51,3 +70,8 @@ To run the database updater
 #### Test
 
     $ npm test
+
+#### Deployment with Docker
+
+    $ docker pull developmentseed/landsat-api:1.1.0
+    $ docker run -d -p "4000:4000" --name landsat-api developmentseed/landsat-api:1.1.0
