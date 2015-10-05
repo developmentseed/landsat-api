@@ -10,7 +10,7 @@ def main():
     meta = Metadata('metadata.csv',
                     'http://landsat.usgs.gov/metadata_service/bulk_metadata_files/LANDSAT_8.csv',
                     base,
-                    [{'host': 'localhost', 'port': 9200, 'use_ssl': False}],
+                    [os.getenv('ES_HOST', 'elasticsearch:9200')],
                     'landsat',
                     '8')
 
