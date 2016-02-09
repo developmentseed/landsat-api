@@ -21,6 +21,8 @@ module.exports = function (params, request, cb) {
   // Decide from
   var skip = request.limit * (request.page - 1);
 
+
+  fields = {};
   // Summary fields
   if (boolifyString(params.summary)) {
     fields = {
@@ -48,6 +50,9 @@ module.exports = function (params, request, cb) {
       boundingBox: 1
     };
   }
+
+  // exclude _id
+  fields['_id'] = 0;
 
   var db = request.server.plugins['hapi-mongodb'].db;
   var collection = db.collection('landsats');

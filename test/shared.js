@@ -28,6 +28,7 @@ module.exports = function (port) {
       expect(response.statusCode).to.equal(200);
       var res = JSON.parse(body);
       expect(res.results[0].sceneID).to.equal('LC81560392015209LGN00');
+      expect('_id' in res.results[0]).to.equal(false);
       done();
     });
   });
