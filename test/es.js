@@ -20,7 +20,7 @@ describe('Elasticsearch tests', function () {
   before(function (done) {
     process.env.ES_INDEX = testIndex;
     process.env.DB_TYPE = 'landsat';
-    process.env.ES_HOST = 'localhost:9200';
+    process.env.ES_HOST = process.env.ES_TEST_HOST || 'localhost:9200';
 
     // Add records to elasticsearch
     var csv = fs.readFileSync(__dirname + '/test_data.csv', {encoding: 'utf8'});

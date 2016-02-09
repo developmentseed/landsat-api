@@ -1,0 +1,39 @@
+dev:
+  build: .
+  command: 'nodemon /app/index.js'
+  environment:
+    MONGODB_URL: mongodb://landsatapi_mongo_1/landsat-test
+    DB_TYPE: mongo
+    REDIS_USE: false
+  links:
+    - mongo:mongo
+  working_dir: /app
+  ports:
+    - "4000:4000"
+  volumes:
+    - .:/app
+
+test:
+  build: .
+  command: 'npm test'
+  environment:
+    ES_TEST_HOST: landsatapi_elasticsearch_1:9200
+    ES_HOST: landsatapi_elasticsearch_1:9200
+    MONGODB_TEST_URL: mongodb://landsatapi_mongo_1/landsat-test
+  links:
+    - mongo:mongo
+    - elasticsearch:elasticsearch
+  working_dir: /app
+  volumes:
+    - .:/app
+
+mongo:
+  image: mongo:2.6
+  expose:
+    - "27017"
+
+elasticsearch:
+  image: elasticsearch:1.7.2
+  command: 'elasticsearch'
+  expose:
+    - "9200"

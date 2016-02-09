@@ -36,11 +36,11 @@
     "good": "^6.3.0",
     "good-console": "^5.0.2",
     "hapi": "^9.3.0",
-    "hapi-mongodb": "^3.0.0",
+    "hapi-mongodb": "~3.1.0",
     "hapi-paginate": "^0.2.0",
     "hapi-response-meta": "^0.2.0",
     "hapi-router": "^3.3.0",
-    "landsat-meta-updater": "^0.4.0",
+    "landsat-meta-updater": "^0.5.1",
     "lodash": "^3.9.3",
     "moment": "^2.10.6",
     "mongodb": "^2.0.42",
@@ -56,8 +56,7 @@
     "apidoc": "^0.13.1",
     "chai": "^3.2.0",
     "fs-extra": "^0.22.1",
-    "mocha": "^2.2.5",
-    "request": "^2.60.0"
+    "mocha": "^2.2.5"
   },
   "apidoc": {
     "title": "landsat-api",

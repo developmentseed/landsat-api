@@ -38,6 +38,15 @@ var contains = function (params, query) {
   if (correct_query.test(params)) {
     var coordinates = params.split(',').map(parseFloat);
 
+    // Make sure lat and long are within the range
+    if (coordinates[0] < -180 || coordinates[0] > 180) {
+      return err.incorrectCoordinatesError(params);
+    }
+
+    if (coordinates[1] < -90 || coordinates[1] > 90) {
+      return err.incorrectCoordinatesError(params);
+    }
+
     query.boundingBox = {
        $geoIntersects: {
           $geometry: {
@@ -167,6 +176,7 @@ var rangeQuery = function (from, to, field, query) {
 **/
 var termQuery = function (param, field, query) {
   if (field === 'dayOrNight') param = param.toUpperCase();
+  if (field === 'row' || field === 'path') param = parseInt(param)
   query[field] = param;
   return query;
 };
@@ -268,6 +278,8 @@ module.exports = function (params, query, limit) {
       query = termQuery(params[termFields[i].parameter], termFields[i].field, query);
     }
   }
+
+  console.log(query)
 
   return query;
 };

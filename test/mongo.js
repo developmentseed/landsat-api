@@ -17,7 +17,7 @@ describe('MongoDb tests', function () {
   before(function (done) {
     // Set env to force use of mongodb
     process.env.DB_TYPE = 'mongo';
-    process.env.MONGODB_URL = 'mongodb://localhost/landsat-test';
+    process.env.MONGODB_URL = process.env.MONGODB_TEST_URL || 'mongodb://localhost/landsat-test';
 
     var db1;
 
