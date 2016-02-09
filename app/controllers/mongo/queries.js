@@ -167,6 +167,7 @@ var rangeQuery = function (from, to, field, query) {
 **/
 var termQuery = function (param, field, query) {
   if (field === 'dayOrNight') param = param.toUpperCase();
+  if (field === 'row' || field === 'path') param = parseInt(param)
   query[field] = param;
   return query;
 };
@@ -268,6 +269,8 @@ module.exports = function (params, query, limit) {
       query = termQuery(params[termFields[i].parameter], termFields[i].field, query);
     }
   }
+
+  console.log(query)
 
   return query;
 };
