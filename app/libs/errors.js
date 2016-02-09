@@ -16,7 +16,7 @@ module.exports.invalidGeoJsonError = function () {
 module.exports.incorrectCoordinatesError = function (data) {
   err = Boom.create(
     400,
-    'Incorrect coordinates: ' + data + '. Only digits, dot, minus and comma are allowd.',
+    'Incorrect coordinates: ' + data + '. Only digits, dot, minus and comma are allowd. Accepted range: -90 < lat < 90 && -180 < lon < 180',
     { timestamp: Date.now() }
   );
   throw err;

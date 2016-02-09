@@ -259,6 +259,16 @@ module.exports = function (port) {
     });
   });
 
+  it('contains with bad lat/lon should return 400 error', function (done) {
+    request(url + '?contains=37.23,91', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(400);
+      done();
+    });
+  });
+
   it('legacy search with sceneID should work', function (done) {
     var scene = 'LC81560422015209LGN00';
     request(url + '?search=sceneID:' + scene, function (err, response, body) {

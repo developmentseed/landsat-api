@@ -51,6 +51,14 @@ var contains = function (params, query) {
     var coordinates = params.split(',');
     coordinates = coordinates.map(parseFloat);
 
+    if (coordinates[0] < -180 || coordinates[0] > 180) {
+      return err.incorrectCoordinatesError(params);
+    }
+
+    if (coordinates[1] < -90 || coordinates[1] > 90) {
+      return err.incorrectCoordinatesError(params);
+    }
+
     var shape = ejs.Shape('circle', coordinates).radius('1km');
 
     query = query.must(ejs.GeoShapeQuery()

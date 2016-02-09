@@ -38,6 +38,15 @@ var contains = function (params, query) {
   if (correct_query.test(params)) {
     var coordinates = params.split(',').map(parseFloat);
 
+    // Make sure lat and long are within the range
+    if (coordinates[0] < -180 || coordinates[0] > 180) {
+      return err.incorrectCoordinatesError(params);
+    }
+
+    if (coordinates[1] < -90 || coordinates[1] > 90) {
+      return err.incorrectCoordinatesError(params);
+    }
+
     query.boundingBox = {
        $geoIntersects: {
           $geometry: {
