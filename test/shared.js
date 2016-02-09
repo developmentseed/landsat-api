@@ -104,6 +104,42 @@ module.exports = function (port) {
     });
   });
 
+  it('just path return 10', function (done) {
+    request(url + '?path=156', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(10);
+      done();
+    });
+  });
+
+  it('row and path should return 1', function (done) {
+    request(url + '?row=63&path=156', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(1);
+      done();
+    });
+  });
+
+  it('row and path with nonnumerical should return 1', function (done) {
+    request(url + '?row=063&path=156', function (err, response, body) {
+      if (err) {
+        console.log(err);
+      }
+      expect(response.statusCode).to.equal(200);
+      var res = JSON.parse(body);
+      expect(res.meta.found).to.equal(1);
+      done();
+    });
+  });
+
   it('with large area polygon, intersects should return 10', function (done) {
     var geojson = '{ "type": "Feature", "properties": {}, "geometry": { \
         "type": "Polygon", \
