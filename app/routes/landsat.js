@@ -74,8 +74,30 @@ var prepareRequest = function (request) {
  */
 module.exports = [
   {
-    method: ['GET', 'POST'],
+    method: 'GET',
     path: '/landsat',
+    handler: function (request, reply) {
+      var params = prepareRequest(request);
+
+      // Send for processing
+      request.server.methods.landsat(params, request, function (err, records) {
+        if (err) {
+          request.log(err);
+          return reply(err);
+        }
+
+        return reply(records);
+      });
+    }
+  },
+  {
+    method: 'POST',
+    path: '/landsat',
+    config: {
+      payload: {
+        maxBytes: process.env.LANDSAT_PAYLOAD_LIMIT || 2048000
+      }
+    },
     handler: function (request, reply) {
       var params = prepareRequest(request);
 
