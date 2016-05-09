@@ -87,8 +87,8 @@ var client = new elasticsearch.Client({
   requestTimeout: 15000  // milliseconds
 });
 
-app.get('/', function(req, res) {
-  res.redirect('http://www.developmentseed.org');
+app.get('/landsat', function(req, res) {
+  res.redirect('/');
 });
 
 app.get('/healthcheck', function(request, response) {
@@ -236,8 +236,8 @@ TrySearch = function(index, params, es_search_params, response) {
   });
 };
 
-Endpoint = function(noun) {
-  app.get('/' + noun, function(request, response) {
+Endpoint = function() {
+  app.get('/', function(request, response) {
     LogRequest(request);
     SetHeaders(response);
 
@@ -256,7 +256,7 @@ Endpoint = function(noun) {
     TrySearch(index, params, es_search_params, response);
   });
 };
-Endpoint('landsat');
+Endpoint();
 
 // From http://strongloop.com/strongblog/
 // robust-node-applications-error-handling/
