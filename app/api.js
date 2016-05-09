@@ -56,7 +56,7 @@ var FIELDS_TO_REMOVE = [
 
 ];
 
-var MAIN_INDEX = 'landsat';
+var MAIN_INDEX = 'sat-api';
 
 var app = express();
 
@@ -178,6 +178,7 @@ TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) 
 };
 
 TrySearch = function(index, params, es_search_params, response) {
+  console.log(es_search_params)
   client.search(es_search_params).then(function(body) {
     if (body.hits.hits.length == 0) {
       ApiError(response, 'NOT_FOUND', 'No matches found!');
@@ -246,7 +247,7 @@ Endpoint = function(noun) {
       return;
     }
 
-    var index = noun;
+    var index = MAIN_INDEX;
     var es_search_params =
       TryToBuildElasticsearchParams(params, index, response);
     if (es_search_params == null) {
