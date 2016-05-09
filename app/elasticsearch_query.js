@@ -48,7 +48,7 @@ exports.BuildQuery = function(params) {
   q = ejs.Request();
 
   if (!params.search && !params.count) {
-    q.query(ejs.QueryStringQuery('satellite_name:landsat'));
+    q.query(ejs.MatchAllQuery());
   }
 
   if (params.search) {
@@ -58,7 +58,6 @@ exports.BuildQuery = function(params) {
         message: 'Search not supported: ' + params.search
       };
     }
-    params.search = params.search + ' AND satellite_name:landsat';
     q.query(ejs.QueryStringQuery(exports.ReplaceExact(params.search)));
   }
 

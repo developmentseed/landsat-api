@@ -56,6 +56,7 @@ var FIELDS_TO_REMOVE = [
 ];
 
 var MAIN_INDEX = 'sat-api';
+var MAIN_TYPE = 'landsat8';
 
 var app = express();
 
@@ -165,6 +166,7 @@ TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) 
 
   var es_search_params = {
     index: elasticsearch_index,
+    type: MAIN_TYPE,
     body: es_query.toString()
   };
 
@@ -177,10 +179,9 @@ TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) 
 };
 
 TrySearch = function(index, params, es_search_params, response) {
-  console.log(es_search_params)
   client.search(es_search_params).then(function(body) {
     if (body.hits.hits.length == 0) {
-      ApiError(response, 'NOT_FOUND', 'No matches found!');
+      return ApiError(response, 'NOT_FOUND', 'No matches found!');
     }
 
     var response_json = {};
@@ -210,7 +211,7 @@ TrySearch = function(index, params, es_search_params, response) {
           response_json.results = body.facets.count.terms;
           response.json(HTTP_CODE.OK, response_json);
         } else {
-          ApiError(response, 'NOT_FOUND', 'Nothing to count');
+          return ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
       } else if (body.facets.count.entries) {
         // Date facet count
@@ -222,13 +223,13 @@ TrySearch = function(index, params, es_search_params, response) {
           response_json.results = body.facets.count.entries;
           response.json(HTTP_CODE.OK, response_json);
         } else {
-          ApiError(response, 'NOT_FOUND', 'Nothing to count');
+          return ApiError(response, 'NOT_FOUND', 'Nothing to count');
         }
       } else {
-        ApiError(response, 'NOT_FOUND', 'Nothing to count');
+        return ApiError(response, 'NOT_FOUND', 'Nothing to count');
       }
     } else {
-      ApiError(response, 'NOT_FOUND', 'No matches found!');
+      return ApiError(response, 'NOT_FOUND', 'No matches found!');
     }
   }, function(error) {
     log.error(error);
