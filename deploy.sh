@@ -9,7 +9,7 @@ if [ "$TRAVIS_BRANCH" == "v0_1" ]; then
   git config user.email "travis@somewhere.com"
   git add .
   git commit -m "CI deploy to gh-pages"
-  git push --force --quiet "https://${GH_TOKEN}@${GH_REF}"
+  git push --force --quiet --set-upstream https://-:${GH_TOKEN}@${GH_REF} master
 else
   echo "Not a publishable branch so we're all done here"
 fi
