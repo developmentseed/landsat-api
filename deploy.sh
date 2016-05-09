@@ -2,7 +2,7 @@
 set -e # halt script on error
 
 # If this is the deploy branch, push it up to gh-pages
-if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = ${DEPLOY_BRANCH} ]; then
+if [ "$TRAVIS_BRANCH" == "v0_1" ]; then
   cd app
   git init
   git config user.name "Travis-CI"
