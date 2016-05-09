@@ -25,7 +25,6 @@ if (fse.existsSync(envFile)) {
 }
 
 // New Relic monitoring
-require('newrelic');
 var ejs = require('elastic.js');
 var elasticsearch = require('elasticsearch');
 var express = require('express');
