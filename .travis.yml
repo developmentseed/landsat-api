@@ -6,7 +6,7 @@ deploy:
   provider: script
   script: deploy.sh
   on:
-    branch: v0__1
+    branch: v0_1
 env:
   global:
   - secure: RHb0iI/KiDEtP/f7yrMtgZ4XkRNDKAS8kpsajaxvtLS42gZwRRMCaPdX/0FKf7XwfoNhPhs1BZhz6/pro00YJiX999x6BOwOzyqQK65VG63OJsBUb2LX+XVQCswOM+qg9xkE19YOh2AYi3+bGE3wP7PipAdiEYjKyKwVncRNBvo=
