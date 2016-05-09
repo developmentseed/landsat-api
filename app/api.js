@@ -164,6 +164,8 @@ TryToBuildElasticsearchParams = function(params, elasticsearch_index, response) 
     return null;
   }
 
+  es_query = es_query.sort('date', 'desc');
+
   var es_search_params = {
     index: elasticsearch_index,
     type: MAIN_TYPE,
