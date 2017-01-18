@@ -1,6 +1,10 @@
 ## Landsat8 Metadata API
 
-[![Build Status](https://travis-ci.org/developmentseed/landsat-api.svg?branch=develop)](https://travis-ci.org/developmentseed/landsat-api)
+**Important:** This tool is retired and no longer maintianed. Please use [sat-api](https://github.com/sat-utils/sat-api).
+
+A version of **sat-api** with Landsat metadata is accessible [here](https://api.developmentseed.org/satellites/landsat).
+
+<hr />
 
 This is an API for NASA/USGS Landsat-8 images. Landsat-api enables you to make geospatial, date and text queries on Landsat-8 metadata.
 
